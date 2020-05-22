@@ -1,0 +1,243 @@
+@import '~@vue/ui/dist/vue-ui.css';
+@import "~primer-support/index.scss";
+
+$primary: #FF0089;
+$secondary: #1B162F;
+$bg-topnav: #242038;
+$bg-color: #724CF9;
+$bg-disabled: #3B344D;
+$text-disabled: #666274;
+
+$body-font-size: 17px;
+$border-radius: 12px;
+$h1-size: 32px;
+$body-line-height: 1.2;
+$border: 1px solid $bg-color;
+
+* {
+  outline: none;
+}
+
+@import '~@primer/css/index.scss';
+
+html, body, #app {
+  text-align: center;
+  background-color: $bg-color;
+  color: white;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  cursor: pointer;
+  color: white;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.bg-topnav {
+  background-color: $bg-topnav;
+}
+
+.bg-secondary {
+  background-color: $secondary;
+}
+
+.button {
+  cursor: pointer;
+  font-weight: bold;
+  min-width: 200px;
+  padding: 0 24px;
+  display: inline-block;
+  border: 0;
+
+  &:disabled {
+    color: $text-disabled;
+    background-color: $secondary;
+    border: 0;
+    cursor: not-allowed;
+  }
+}
+
+.button-primary {
+  height: 44px;
+  line-height: 44px;
+  border-radius: 22px;
+  font-size: 15px;
+  text-transform: uppercase;
+  color: white;
+  background-color: $primary;
+}
+
+.button-outline {
+  @extend .button-primary;
+  color: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+  background-color: transparent;
+}
+
+.button-info {
+  height: 44px;
+  line-height: 44px;
+  border-radius: 22px;
+  font-size: 15px;
+  color: white;
+  background-color: $secondary;
+  min-width: auto;
+}
+
+.button-select {
+  color: white;
+  height: 54px;
+  line-height: 54px;
+  border-radius: 6px;
+  background-color: $secondary;
+
+  &.active {
+    box-shadow: inset 0 0 0 1px $primary;
+  }
+}
+
+.login-bullet {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background-color: $primary;
+  display: inline-block;
+  margin-bottom: -2px;
+}
+
+.mainnav {
+  height: 54px;
+  line-height: 54px;
+  border-radius: 27px;
+  background-color: $bg-disabled;
+  display: inline-block;
+}
+
+.button-secondary {
+  height: 54px;
+  line-height: 54px;
+  border-radius: 27px;
+  color: white;
+  background-color: $bg-disabled;
+
+  &.router-link-exact-active {
+    color: $primary;
+    background-color: $secondary;
+  }
+}
+
+.form {
+  max-width: 368px;
+  margin: 0 auto;
+}
+
+.input {
+  border: 1px solid white;
+  background: transparent;
+  outline: none;
+  display: block;
+  height: 44px;
+  line-height: 44px;
+  font-size: 17px;
+  padding: 0 14px;
+  border-radius: 6px;
+  color: white;
+  width: 100%;
+}
+
+::placeholder {
+  color: white;
+  opacity: 1;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $bg-topnav;
+  border: 0;
+  border-radius: 0;
+  background-clip: padding-box;
+
+  &:hover {
+    background-color: $primary;
+  }
+}
+
+.block {
+  @extend .container-sm;
+  @extend .p-responsive;
+  @extend .bg-secondary;
+  @extend .rounded-1;
+  @extend .py-6;
+  @extend .mb-4;
+  background-color: $bg-topnav;
+  box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.1);
+
+  p {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.container-lg {
+  max-width: 1086px;
+}
+
+.container-sm {
+  max-width: 500px;
+}
+
+.modal {
+
+  .backdrop {
+    background: transparentize($bg-topnav, 0.5) !important;
+  }
+
+  .shell {
+    @extend .block;
+    max-width: 420px;
+
+    .modal-body {
+      @extend .px-2;
+      text-align: center !important;
+    }
+  }
+
+  .button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+.text-primary {
+  color: $primary;
+}
+
+.vue-ui-switch {
+  &.selected {
+    .wrapper {
+      background-color: $primary !important;
+    }
+
+    .bullet {
+      margin-left: 21px !important;
+    }
+  }
+
+  .wrapper {
+    width: 42px !important;
+    height: 20px !important;
+    border-radius: 10px !important;
+    background-color: $secondary !important;
+
+    .bullet {
+      width: 18px !important;
+      height: 18px !important;
+      border-radius: 9px !important;
+      background-color: white !important;
+    }
+  }
+}
