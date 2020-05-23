@@ -1,14 +1,20 @@
 <template>
   <Modal :open="open" @close="$emit('close')">
-    <div>
+    <div class="modal-body">
       <h2 class="mb-5">Select asset</h2>
       <a
-        class="d-block p-3 text-left"
-        v-for="token in tokens"
-        :key="token"
-        @click="select(token)"
+        class="d-block py-3 px-4 text-left highlight d-flex"
+        v-for="(token, i) in tokens"
+        :key="i"
+        @click="select(token.ticker)"
       >
-        <h3>{{ token }}</h3>
+        <img :src="require(`@/assets/${token.ticker}.png`)" height="40" class="mr-3" />
+        <div>
+          <div class="mb-1">
+            <b>{{ token.name }}</b>
+          </div>
+          {{ token.ticker }}
+        </div>
       </a>
     </div>
   </Modal>
@@ -16,9 +22,11 @@
 
 <script>
 const tokens = [
-  'BTC',
-  'Gold',
-  'Tesla'
+  { name: 'Bitcoin', ticker: 'BTC' },
+  { name: 'Ethereum', ticker: 'ETH' },
+  { name: 'Chainlink', ticker: 'LINK' },
+  { name: 'Maker', ticker: 'MKR' },
+  { name: 'Basic Attention Token', ticker: 'BAT' }
 ];
 
 export default {

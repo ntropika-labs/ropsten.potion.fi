@@ -1,6 +1,6 @@
 <template>
   <Modal :open="open" @close="$emit('close')">
-    <div class="modal-body">
+    <div class="modal-body px-4">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
       <h2 class="mb-5">Your revitalization</h2>
       <div class="text-left">

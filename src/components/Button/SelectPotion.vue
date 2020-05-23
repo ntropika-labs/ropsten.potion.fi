@@ -1,7 +1,9 @@
 <template>
   <span>
     <a class="input" @click="modalOpen = true">
-      <span v-if="input" v-text="input" />
+      <span v-if="input">
+        {{ input.token }}, strike price: ${{ $n(input.strike) }} ({{ input.expiry }})
+      </span>
       <template v-else>Your potions</template>
     </a>
     <ModalSelectPotion :open="modalOpen" @close="modalOpen = false" @input="input = $event" />

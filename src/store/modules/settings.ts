@@ -2,7 +2,8 @@ import Vue from 'vue';
 import { ethers } from 'ethers';
 import store from '@/store';
 import provider from '@/helpers/provider';
-import { abi } from '@/helpers/ExpiringMultiPartyCreator.json';
+import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
+import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
 
 const ethereum = window['ethereum'];
 if (ethereum) {
@@ -74,14 +75,21 @@ const actions = {
     commit('set', { exchangeRates: json });
   },
   async approve({ commit }) {
+    const daiAddress = process.env.VUE_APP_DAI_ADDRESS;
     const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
+    const signer = provider.getSigner();
     // @ts-ignore
-    const contract = new ethers.Contract(factoryAddress, abi, provider);
-    const value = await contract.getContractAddressList();
-    alert(JSON.stringify(value));
+    const contract = new ethers.Contract(daiAddress, ierc20Abi, provider);
+    const contractWithSigner = contract.connect(signer);
+    const tx = await contractWithSigner.approve(
+      factoryAddress,
+      ethers.utils.parseEther('100000000000')
+    );
+    console.log(tx.hash);
+    await tx.wait();
   },
   async create({ commit }) {
-    await new Promise(resolve => setTimeout(resolve, 1e3));
+    // await new Promise(resolve => setTimeout(resolve, 1e3));
   }
 };
 

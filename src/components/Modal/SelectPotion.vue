@@ -1,14 +1,21 @@
 <template>
   <Modal :open="open" @close="$emit('close')">
-    <div>
+    <div class="modal-body">
       <h2 class="mb-5">Select potion</h2>
       <a
-        class="d-block p-3 text-left"
-        v-for="potion in potions"
-        :key="potion"
+        class="d-block py-3 px-4 text-left highlight d-flex"
+        v-for="(potion, i) in potions"
+        :key="i"
         @click="select(potion)"
       >
-        <p>{{ potion }}</p>
+        <img :src="require(`@/assets/${potion.token}.png`)" height="40" class="mr-3" />
+        <div class="flex-auto">
+          <div class="mb-1">
+            <b>{{ potion.token }}</b>
+          </div>
+          ${{ $n(potion.strike) }}
+        </div>
+        <p class="mt-2" v-text="potion.expiry" />
       </a>
     </div>
   </Modal>
@@ -16,9 +23,21 @@
 
 <script>
 const potions = [
-  'Position on ETH strike $200 September 2020',
-  'Position on Gold strike $1,600 August 2020',
-  'Position on BTC strike $9,400 July 2020'
+  {
+    token: 'BTC',
+    strike: 10000,
+    expiry: 'September 2020'
+  },
+  {
+    token: 'ETH',
+    strike: 200,
+    expiry: 'August 2020'
+  },
+  {
+    token: 'LINK',
+    strike: 2,
+    expiry: 'July 2020'
+  }
 ];
 
 export default {

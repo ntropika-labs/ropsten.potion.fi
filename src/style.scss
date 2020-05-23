@@ -41,11 +41,16 @@ $border: 1px solid $bg-color;
 
 html, body, #app {
   text-align: center;
-  background-color: $bg-color;
+  background-color: $bg-topnav;
   color: white;
   font-family: 'Europa-Regular', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  background-color: $bg-color;
+  min-height: 100vh;
 }
 
 h1, h2, h3, .button {
@@ -203,7 +208,7 @@ input.input:read-only {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: $bg-topnav;
+  background-color: $secondary;
   border: 0;
   border-radius: 0;
   background-clip: padding-box;
@@ -215,12 +220,12 @@ input.input:read-only {
 
 .block {
   @extend .container-sm;
-  @extend .p-responsive;
   @extend .bg-secondary;
   @extend .rounded-lg-1;
   @extend .rounded-md-1;
   @extend .rounded-sm-1;
   @extend .py-6;
+  @extend .px-4;
   @extend .mb-4;
   background-color: $bg-topnav;
   box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.1);
@@ -241,15 +246,16 @@ input.input:read-only {
 
 .modal {
   .backdrop {
-    background: transparentize($bg-topnav, 0.5) !important;
+    background: transparentize($secondary, 0.4) !important;
   }
 
   .shell {
     @extend .block;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     max-width: 420px;
 
     .modal-body {
-      @extend .px-2;
       text-align: center !important;
     }
   }
@@ -344,4 +350,8 @@ input.input:read-only {
       color: white;
     }
   }
+}
+
+.highlight:hover {
+  background-color: $secondary;
 }

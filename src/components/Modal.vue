@@ -2,7 +2,7 @@
   <div v-if="open" class="modal">
     <div class="backdrop" @click="$emit('close')" />
     <div class="shell overflow-hidden anim-scale-in position-relative">
-      <a @click="$emit('close')" class="position-absolute iconfont iconclose right-3 top-3 p-2"/>
+      <a @click="$emit('close')" class="position-absolute iconfont iconclose right-3 top-3 p-2" />
       <slot />
     </div>
   </div>

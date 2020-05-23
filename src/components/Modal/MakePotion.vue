@@ -1,6 +1,6 @@
 <template>
   <Modal :open="open" @close="$emit('close')">
-    <div class="modal-body">
+    <div class="modal-body px-4">
       <img src="~/@/assets/recipe.svg" class="mb-2" />
       <div v-if="!isConfirmed">
         <h2 class="mb-5">Your recipe</h2>
@@ -84,10 +84,12 @@ export default {
   computed: {
     ...mapState(['settings']),
     currentPrice() {
-      return this.settings.exchangeRates.bitcoin.usd.toFixed(0);
+      return this.settings.exchangeRates.bitcoin
+        ? this.settings.exchangeRates.bitcoin.usd.toFixed(0)
+        : 0;
     },
     blackScholes() {
-      return bs.blackScholes(this.currentPrice, this.form.strike, (1 / 365) * 7, 0.2, 0.08, 'put');
+      return bs.blackScholes(this.currentPrice, this.form.strike, (1 / 365) * 7, 0.2, 0, 'put');
     }
   },
   methods: {
