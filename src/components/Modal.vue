@@ -2,9 +2,7 @@
   <div v-if="open" class="modal">
     <div class="backdrop" @click="$emit('close')" />
     <div class="shell overflow-hidden anim-scale-in position-relative">
-      <a @click="$emit('close')" class="position-absolute right-3 top-3 p-2">
-        <img src="~/@/assets/close.svg" />
-      </a>
+      <a @click="$emit('close')" class="position-absolute iconfont iconclose right-3 top-3 p-2"/>
       <slot />
     </div>
   </div>
@@ -45,6 +43,14 @@ export default {
     z-index: 999;
     margin: 0 auto;
     width: 100%;
+
+    @media (max-width: 767px) {
+      width: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      min-height: 100% !important;
+      margin-bottom: 0 !important;
+    }
 
     .modal-body {
       text-align: initial;

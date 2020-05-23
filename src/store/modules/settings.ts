@@ -2,6 +2,7 @@ import Vue from 'vue';
 import { ethers } from 'ethers';
 import store from '@/store';
 import provider from '@/helpers/provider';
+import { abi } from '@/helpers/ExpiringMultiPartyCreator.json';
 
 const ethereum = window['ethereum'];
 if (ethereum) {
@@ -31,7 +32,17 @@ const mutations = {
 const actions = {
   init: async ({ commit, dispatch }) => {
     commit('set', { loading: true });
-    dispatch('getExchangeRates').then(() => commit('set', { loading: false }));
+    if (provider) {
+      try {
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        if (address) await dispatch('login');
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    await dispatch('getExchangeRates');
+    commit('set', { loading: false });
   },
   login: async ({ commit }) => {
     if (provider) {
@@ -57,13 +68,20 @@ const actions = {
   loading: ({ commit }, payload) => {
     commit('set', { loading: payload });
   },
-  getExchangeRates({ commit }) {
+  async getExchangeRates({ commit }) {
     const uri = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
-    fetch(uri)
-      .then(res => res.json())
-      .then(json => {
-        commit('set', { exchangeRates: json });
-      });
+    const json = await fetch(uri).then(res => res.json());
+    commit('set', { exchangeRates: json });
+  },
+  async approve({ commit }) {
+    const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
+    // @ts-ignore
+    const contract = new ethers.Contract(factoryAddress, abi, provider);
+    const value = await contract.getContractAddressList();
+    alert(JSON.stringify(value));
+  },
+  async create({ commit }) {
+    await new Promise(resolve => setTimeout(resolve, 1e3));
   }
 };
 

@@ -1,5 +1,6 @@
 @import '~@vue/ui/dist/vue-ui.css';
 @import '~primer-support/index.scss';
+@import './assets/fonts/iconfont.css';
 
 $primary: #FF0089;
 $secondary: #1B162F;
@@ -51,6 +52,17 @@ h1, h2, h3, .button {
   font-family: 'Europa-Bold', Helvetica, Arial, sans-serif;
 }
 
+h6 {
+  color: $bg-color;
+  font-size: 14px;
+  font-weight: normal;
+
+  a {
+    color: $primary;
+    text-decoration: underline;
+  }
+}
+
 a {
   cursor: pointer;
   color: white;
@@ -86,7 +98,7 @@ a {
 
 .button-primary {
   height: 44px;
-  line-height: 44px;
+  line-height: 42px;
   border-radius: 22px;
   font-size: 15px;
   text-transform: uppercase;
@@ -115,6 +127,7 @@ a {
   color: white;
   height: 54px;
   line-height: 54px;
+  padding: 0 18px;
   border-radius: 6px;
   background-color: $secondary;
 
@@ -142,8 +155,9 @@ a {
 
 .button-secondary {
   height: 54px;
-  line-height: 54px;
+  line-height: 50px;
   border-radius: 27px;
+  font-size: 18px;
   color: white;
   background-color: $bg-disabled;
 
@@ -159,6 +173,7 @@ a {
 }
 
 .input {
+  text-align: left;
   border: 1px solid white;
   background: transparent;
   outline: none;
@@ -170,6 +185,16 @@ a {
   border-radius: 6px;
   color: white;
   width: 100%;
+
+  &:focus {
+    border-color: $bg-color;
+  }
+}
+
+input.input:read-only {
+  color: $text-disabled;
+  border-color: $text-disabled;
+  cursor: not-allowed;
 }
 
 ::placeholder {
@@ -192,7 +217,9 @@ a {
   @extend .container-sm;
   @extend .p-responsive;
   @extend .bg-secondary;
-  @extend .rounded-1;
+  @extend .rounded-lg-1;
+  @extend .rounded-md-1;
+  @extend .rounded-sm-1;
   @extend .py-6;
   @extend .mb-4;
   background-color: $bg-topnav;
@@ -213,7 +240,6 @@ a {
 }
 
 .modal {
-
   .backdrop {
     background: transparentize($bg-topnav, 0.5) !important;
   }
@@ -231,6 +257,10 @@ a {
   .button {
     width: 100%;
     min-width: auto;
+  }
+
+  .button-outline {
+    max-width: 50%;
   }
 }
 
@@ -260,6 +290,58 @@ a {
       height: 18px !important;
       border-radius: 9px !important;
       background-color: white !important;
+    }
+  }
+}
+
+.vue-ui-loading-indicator {
+  background-color: transparent !important;
+
+  .animation {
+    border-color: transparentize(white, 0.8);
+    border-width: 4px !important;
+    width: 26px !important;
+    height: 26px !important;
+    border-right-color: white;
+  }
+}
+
+.loading-lg {
+  .animation {
+    border-color: transparent;
+    border-right-color: $primary;
+    border-width: 8px !important;
+    width: 124px !important;
+    height: 124px !important;
+  }
+}
+
+.calendar {
+  width: 309px;
+  margin: 0 auto;
+
+  .day {
+    color: $text-disabled;
+    text-decoration: none;
+    font-size: 17px !important;
+    float: left;
+    text-align: center;
+    line-height: 44px;
+    width: 44px;
+    height: 44px;
+
+    &.selectable {
+      color: white;
+      background-color: transparent;
+
+      :hover {
+        background-color: $bg-color;
+      }
+    }
+
+    &.selected {
+      background-color: $bg-color;
+      color: white;
     }
   }
 }

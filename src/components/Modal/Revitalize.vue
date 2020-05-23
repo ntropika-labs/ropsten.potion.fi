@@ -2,10 +2,12 @@
   <Modal :open="open" @close="$emit('close')">
     <div class="modal-body">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
-      <h2 class="mb-4">Your revitalization</h2>
+      <h2 class="mb-5">Your revitalization</h2>
       <div class="text-left">
         <div class="border-bottom mb-5">
-          <div class="mb-4">Strike price<span class="float-right">$123</span></div>
+          <div class="mb-4">
+            Strike price<span class="float-right">${{ $n(1234) }}</span>
+          </div>
           <div class="mb-4">Expiry date<span class="float-right">August 2020</span></div>
           <div class="mb-5">Asset<span class="float-right">BTC</span></div>
         </div>

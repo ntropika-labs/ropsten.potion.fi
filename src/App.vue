@@ -1,8 +1,10 @@
 <template>
   <div id="app" class="overflow-hidden pb-6">
-    <Nav />
-    <VueLoadingIndicator v-if="settings.loading" class="big" />
-    <router-view v-else :key="$route.path" />
+    <VueLoadingIndicator v-if="settings.loading" class="overlay big" />
+    <div v-else>
+      <Nav />
+      <router-view :key="$route.path" />
+    </div>
   </div>
 </template>
 

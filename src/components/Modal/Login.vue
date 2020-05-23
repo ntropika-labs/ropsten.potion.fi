@@ -5,7 +5,7 @@
       <h2 class="mb-5">Select wallet</h2>
       <button
         class="d-flex text-left mb-7 button button-select"
-        @click="service = 'metamask'"
+        @click="service = !service ? 'metamask' : ''"
         :class="{ active: service === 'metamask' }"
       >
         <span class="flex-auto">MetaMask</span>
@@ -13,8 +13,13 @@
       </button>
       <div class="d-flex mb-2">
         <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>
-        <button class="button button-primary col-6 ml-2" @click="handleLogin" :disabled="!service">
-          Confirm
+        <button
+          class="button button-primary col-6 ml-2"
+          @click="handleLogin"
+          :disabled="!service || isLoading"
+        >
+          <VueLoadingIndicator v-if="isLoading" class="big" />
+          <template v-else>Confirm</template>
         </button>
       </div>
     </div>
@@ -28,12 +33,14 @@ export default {
   props: ['open'],
   data() {
     return {
+      isLoading: false,
       service: ''
     };
   },
   methods: {
     ...mapActions(['login']),
     handleLogin() {
+      this.isLoading = true;
       this.login().then(() => this.$emit('close'));
     }
   }
