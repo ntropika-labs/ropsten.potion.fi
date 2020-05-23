@@ -1,5 +1,5 @@
 @import '~@vue/ui/dist/vue-ui.css';
-@import "~primer-support/index.scss";
+@import '~primer-support/index.scss';
 
 $primary: #FF0089;
 $secondary: #1B162F;
@@ -14,6 +14,24 @@ $h1-size: 32px;
 $body-line-height: 1.2;
 $border: 1px solid $bg-color;
 
+@font-face {font-family: 'Europa-Regular';
+  src: url('./assets/fonts/23c0fcab84d99da0de762de7e220a6e1.eot');
+  src: url('./assets/fonts/23c0fcab84d99da0de762de7e220a6e1.eot?#iefix') format('embedded-opentype'),
+  url('./assets/fonts/23c0fcab84d99da0de762de7e220a6e1.woff2') format('woff2'),
+  url('./assets/fonts/23c0fcab84d99da0de762de7e220a6e1.woff') format('woff'),
+  url('./assets/fonts/23c0fcab84d99da0de762de7e220a6e1.ttf') format('truetype'),
+  url('./assets/fonts/23c0fcab84d99da0de762de7e220a6e1.svg#Europa Regular') format('svg');
+}
+
+@font-face {font-family: 'Europa-Bold';
+  src: url('./assets/fonts/d3bfee78e8ead45d9057a95bb6ff5de8.eot');
+  src: url('./assets/fonts/d3bfee78e8ead45d9057a95bb6ff5de8.eot?#iefix') format('embedded-opentype'),
+  url('./assets/fonts/d3bfee78e8ead45d9057a95bb6ff5de8.woff2') format('woff2'),
+  url('./assets/fonts/d3bfee78e8ead45d9057a95bb6ff5de8.woff') format('woff'),
+  url('./assets/fonts/d3bfee78e8ead45d9057a95bb6ff5de8.ttf') format('truetype'),
+  url('./assets/fonts/d3bfee78e8ead45d9057a95bb6ff5de8.svg#Europa-Bold') format('svg');
+}
+
 * {
   outline: none;
 }
@@ -24,9 +42,13 @@ html, body, #app {
   text-align: center;
   background-color: $bg-color;
   color: white;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Europa-Regular', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, .button {
+  font-family: 'Europa-Bold', Helvetica, Arial, sans-serif;
 }
 
 a {

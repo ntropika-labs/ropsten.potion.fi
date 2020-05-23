@@ -9,7 +9,7 @@
         :class="{ active: service === 'metamask' }"
       >
         <span class="flex-auto">MetaMask</span>
-        <img src="~/@/assets/metamask.svg" height="30" class="mt-2" />
+        <img src="~/@/assets/metamask.svg" height="30" class="mt-2 pt-1" />
       </button>
       <div class="d-flex mb-2">
         <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>

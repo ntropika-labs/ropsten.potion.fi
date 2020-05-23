@@ -4,10 +4,12 @@ import store from '@/store';
 import provider from '@/helpers/provider';
 
 const ethereum = window['ethereum'];
-ethereum.on('accountsChanged', () => store.dispatch('init'));
-ethereum.on('networkChanged', network => {
-  store.commit('set', { network: ethers.utils.getNetwork(parseInt(network)) });
-});
+if (ethereum) {
+  ethereum.on('accountsChanged', () => store.dispatch('init'));
+  ethereum.on('networkChanged', network => {
+    store.commit('set', { network: ethers.utils.getNetwork(parseInt(network)) });
+  });
+}
 
 const state = {
   loading: false,
