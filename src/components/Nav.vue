@@ -12,7 +12,8 @@
         </div>
         <div class="py-4">
           <a v-if="address" class="button button-info">
-            <span class="login-bullet mr-2 ml-n2" /> {{ name || shorten(address) }}
+            <span class="login-bullet mr-2 ml-n2" />
+            {{ name || shorten(address) }}
           </a>
           <a v-else class="button button-primary" @click="modalLoginOpen = true">
             Connect wallet

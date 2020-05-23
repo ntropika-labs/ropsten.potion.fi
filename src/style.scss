@@ -152,7 +152,7 @@ a {
 
 .mainnav {
   height: 54px;
-  line-height: 54px;
+  line-height: 0;
   border-radius: 27px;
   background-color: $bg-disabled;
   display: inline-block;
@@ -160,7 +160,7 @@ a {
 
 .button-secondary {
   height: 54px;
-  line-height: 50px;
+  line-height: 52px;
   border-radius: 27px;
   font-size: 18px;
   color: white;

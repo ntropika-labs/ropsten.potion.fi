@@ -76,7 +76,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      isApproved: false,
+      isApproved: true,
       isConfirmed: false,
       autoPrice: true
     };
@@ -93,11 +93,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['login', 'approve', 'create']),
+    ...mapActions(['login', 'approve', 'writeMintPotion']),
     handleSubmit() {
       this.isLoading = true;
       if (this.isApproved) {
-        this.create().then(() => {
+        this.writeMintPotion().then(() => {
           this.isConfirmed = true;
           this.isLoading = false;
         });
