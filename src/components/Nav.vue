@@ -19,7 +19,7 @@
             Connect wallet
           </a>
           <a
-            class="button button-info ml-2 d-inline-block"
+            class="button button-info ml-2 d-inline-block hide-sm"
             target="_blank"
             href="https://docs.potion.finance"
           >

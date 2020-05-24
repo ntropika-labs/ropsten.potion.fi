@@ -126,7 +126,7 @@
         <div v-if="step === 3">
           <img src="~/@/assets/check.svg" height="118" class="mb-5" />
           <h2 class="mb-5">Revitalization went good!</h2>
-          <p class="mb-5">5 ETH Available to be withdrawn.</p>
+          <p class="mb-5">DAI available to be withdrawn.</p>
         </div>
         <div>
           <a @click="$emit('close')" class="col-6 button button-outline">

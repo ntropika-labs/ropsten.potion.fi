@@ -134,7 +134,7 @@ const actions = {
     console.log(tx.hash);
     await tx.wait();
   },
-  async writeMintPotion({ commit }, payload) {
+  async writeMintPotion({ commit, dispatch }, payload) {
     const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
     const finderAddress = process.env.VUE_APP_FINDER_ADDRESS;
     const tokenFactoryAddress = process.env.VUE_APP_TOKEN_FACTORY_ADDRESS;
@@ -180,7 +180,7 @@ const actions = {
     );
     console.log(tx.hash);
     await tx.wait();
-    // await new Promise(resolve => setTimeout(resolve, 1e3));
+    await dispatch('loadPotions');
   },
   async loadBalanceIn({ commit }, payload) {
     const potionToken = new ethers.Contract(payload, synthAbi, provider);
