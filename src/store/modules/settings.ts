@@ -134,6 +134,7 @@ const actions = {
       disputerDisputeRewardPct: { rawValue: parseEther('0.1') },
       strikePrice: { rawValue: parseEther(payload.strike) },
       assetPrice: { rawValue: parseEther(payload.price) },
+      assetClass: ticker,
       timerAddress
     };
     const tx = await factoryWithSigner.writeMintPotion(
