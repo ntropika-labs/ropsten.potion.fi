@@ -3,7 +3,7 @@
     <img src="~/@/assets/logo.svg" class="mb-2" />
     <h2 class="mb-4">Manage your potions</h2>
     <p class="mb-6">Drink a potion to exercise your funds or withdraw your ingredients.</p>
-    <div v-if="potions.length > 0">
+    <div class="form" v-if="potions.length > 0">
       <ButtonSelectPotion v-model="form.potion" class="mb-6 d-block" />
       <button
         v-if="form.potion && parseFloat(form.potion.amountRev) > 0"

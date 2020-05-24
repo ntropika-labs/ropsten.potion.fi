@@ -3,11 +3,22 @@
     <div class="modal-body px-4">
       <img src="~/@/assets/top.svg" class="mb-2" />
       <h2 class="mb-5">Get your energy back</h2>
-      <p class="mb-2">Your withdraw</p>
-      <h1 class="text-primary mb-5">{{ form.potion.amountRev }} ETH</h1>
+      <div v-if="step === 0">
+        <p class="mb-2">Your withdraw</p>
+        <h1 class="text-primary mb-5">{{ form.potion.amountRev }} ETH</h1>
+      </div>
+      <div v-else-if="step > 0">
+        <VueLoadingIndicator class="loading-lg mb-5" v-if="step === 1" />
+        <img v-else src="~/@/assets/check.svg" height="118" class="mb-5" />
+        <p class="mb-2">Your withdraw</p>
+        <h2 class="mb-5">{{ form.potion.amountRev }} ETH</h2>
+      </div>
       <div class="d-flex mb-2">
-        <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>
+        <button class="button button-outline col-6 mr-2 mx-auto" @click="$emit('close')">
+          Back to home
+        </button>
         <button
+          v-if="step === 0"
           class="button button-primary col-6 ml-2"
           @click="handleSubmit"
           :disabled="isLoading"
@@ -27,6 +38,7 @@ export default {
   props: ['open', 'form'],
   data() {
     return {
+      step: 0,
       isLoading: false,
       service: ''
     };
@@ -39,8 +51,9 @@ export default {
         revitalID: this.form.potion.revitID,
         potionAddress: this.form.potion.contractAddress
       };
+      this.step = 1;
       await this.withdrawPotion(payload);
-      this.$emit('close');
+      this.step = 2;
     }
   }
 };

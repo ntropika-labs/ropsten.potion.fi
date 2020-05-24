@@ -27,23 +27,6 @@ export async function getExchangeRatesFromCoinGecko() {
   return await fetch(uri).then(res => res.json());
 }
 
-export async function getMarketChartFromCoinGecko(coingeckoId) {
-  const ratePerDay = {};
-  const uri = `https://api.coingecko.com/api/v3/coins/${coingeckoId}/market_chart?vs_currency=usd&days=31`;
-  const marketChart = await fetch(uri).then(res => res.json());
-  marketChart.prices.forEach(p => {
-    const date = new Date();
-    date.setTime(p[0]);
-    const day = date.toISOString().split('T')[0];
-    ratePerDay[day] = p[1];
-  });
-  return ratePerDay;
-}
-
-export async function getBlackScholes(coingeckoId) {
-  return await getMarketChartFromCoinGecko(coingeckoId);
-}
-
 export function getPremiumDeposit(strike, price, days) {
   const otm = 1 - strike / price;
   let premiumDeposit;
@@ -73,7 +56,8 @@ export async function getPotion(address) {
     mintDepo: ethers.utils.formatEther(potion.mintDepo.rawValue),
     expiry: potion.expiry.toString(),
     revitID: potion.revitID.toString(),
-    amountRev: ethers.utils.formatEther(potion.amountRev.rawValue)
+    amountRev: ethers.utils.formatEther(potion.amountRev.rawValue),
+    collateralToWithdraw: ethers.utils.formatEther(potion.collateralToWithdraw.rawValue)
   };
 }
 
@@ -139,4 +123,21 @@ export async function withdrawPotion(payload) {
   );
   console.log('Withdraw tx', tx.hash);
   await tx.wait();
+}
+
+export async function getMarketChartFromCoinGecko(coingeckoId) {
+  const ratePerDay = {};
+  const uri = `https://api.coingecko.com/api/v3/coins/${coingeckoId}/market_chart?vs_currency=usd&days=31`;
+  const marketChart = await fetch(uri).then(res => res.json());
+  marketChart.prices.forEach(p => {
+    const date = new Date();
+    date.setTime(p[0]);
+    const day = date.toISOString().split('T')[0];
+    ratePerDay[day] = p[1];
+  });
+  return ratePerDay;
+}
+
+export async function getBlackScholes(coingeckoId) {
+  return await getMarketChartFromCoinGecko(coingeckoId);
 }

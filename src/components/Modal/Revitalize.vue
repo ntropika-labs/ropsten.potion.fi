@@ -3,7 +3,7 @@
     <div class="modal-body px-4">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
       <div v-if="step === 0">
-        <h2 class="mb-5">Your revitalization</h2>
+        <h2 class="mb-5">Potion exercise</h2>
         <div class="text-left">
           <div class="border-bottom mb-5">
             <div class="mb-4">
@@ -16,7 +16,9 @@
               Asset
               <Ticker :id="coingecko[form.potion.asset]" class="float-right" />
             </div>
-            <div class="mb-5">Available quantity<span class="float-right">X</span></div>
+            <div class="mb-5" v-if="availableQuantity">
+              Available quantity<span class="float-right">{{ availableQuantity }}</span>
+            </div>
           </div>
           <h2 class="mb-5 text-center">Balance revitalization</h2>
           <div class="mb-4">
@@ -114,6 +116,24 @@
           </button>
         </div>
       </div>
+      <div v-else-if="step > 1">
+        <h2 class="mb-5">Hocus pocus!</h2>
+        <div v-if="step === 2">
+          <VueLoadingIndicator class="loading-lg mb-5" />
+          <h2 class="mb-5" v-if="step === 2">Sponsor is verifying…</h2>
+          <p class="mb-5">Current price set to ${{ $n(price) }}</p>
+        </div>
+        <div v-if="step === 3">
+          <img src="~/@/assets/check.svg" height="118" class="mb-5" />
+          <h2 class="mb-5">Revitalization went good!</h2>
+          <p class="mb-5">5 ETH Available to be withdrawn.</p>
+        </div>
+        <div>
+          <a @click="$emit('close')" class="col-6 button button-outline">
+            Back to home
+          </a>
+        </div>
+      </div>
     </div>
   </Modal>
 </template>
@@ -145,10 +165,15 @@ export default {
       return this.settings.exchangeRates[asset] && this.settings.exchangeRates[asset].usd
         ? this.settings.exchangeRates[asset].usd.toFixed(2)
         : 0;
+    },
+    availableQuantity() {
+      const balance = this.settings.balances[this.form.potion.address];
+      if (!balance && this.form.potion.address) this.loadBalanceIn(this.form.potion.address);
+      return balance;
     }
   },
   watch: {
-    open() {
+    open(value) {
       this.autoPrice = true;
       this.price = this.currentPrice;
       this.isLoading = false;
@@ -156,16 +181,17 @@ export default {
       const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
       this.isApproved = !!allowance;
       this.isConfirmed = false;
+      this.step = 0;
+      console.log(this.availableQuantity);
     },
     autoPrice(value) {
       if (value) this.price = this.currentPrice;
     }
   },
   methods: {
-    ...mapActions(['approvePotion', 'revitalisePotion']),
+    ...mapActions(['approvePotion', 'revitalisePotion', 'loadBalanceIn']),
     async handleApprovePotion() {
       this.isLoading = true;
-      console.log(this.form.potion.address);
       try {
         await this.approvePotion(this.form.potion.address);
         this.isApproved = true;
@@ -179,15 +205,14 @@ export default {
       const payload = this.form.potion;
       payload.price = this.price;
       try {
+        this.step++;
         await this.revitalisePotion(payload);
+        this.step++;
         this.isConfirmed = true;
       } catch (e) {
         console.error(e);
       }
       this.isLoading = false;
-    },
-    async handleStakeDai() {
-      alert('Stake DAI');
     }
   }
 };

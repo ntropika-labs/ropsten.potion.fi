@@ -46,10 +46,12 @@
             Quantity<span class="float-right">{{ $n(form.quantity) }}</span>
           </div>
           <div class="mb-4">
-            Price per potion<span class="float-right">{{ $n(premiumDeposit) }} DAI</span>
+            Deposit per potion<span class="float-right">{{ $n(premiumDeposit) }} DAI</span>
           </div>
           <div class="mb-5 text-bold text-primary">
-            Total price<span class="float-right">{{ $n(form.quantity * premiumDeposit) }} DAI</span>
+            Total deposit<span class="float-right"
+              >{{ $n(form.quantity * premiumDeposit) }} DAI</span
+            >
           </div>
         </div>
         <h2 class="mb-4">Want to purchase?</h2>
@@ -66,13 +68,16 @@
       </div>
       <div v-else>
         <h2 class="mb-5">Mix, turn and pour</h2>
-        <VueLoadingIndicator class="loading-lg mb-5" />
-        <p class="mb-3">
-          <Ticker :id="form.asset" />
-          potion<br />
-          Strike at ${{ $n(form.strike) }} on {{ form.expiry }}
+        <VueLoadingIndicator class="loading-lg mb-5" v-if="!isCompleted" />
+        <img v-else src="~/@/assets/check.svg" height="118" class="mb-5" />
+        <p class="mb-5">
+          Potion for <Ticker :id="form.asset" type="short" class="ml-1" /> at ${{
+            $n(form.strike)
+          }}
+          on {{ form.expiry }}
         </p>
-        <h2 class="mb-5">Wait for creation…</h2>
+        <h2 class="mb-5" v-if="!isCompleted">Wait for creation…</h2>
+        <h2 class="mb-5" v-else>Potion created!</h2>
         <div>
           <a @click="$emit('close')" class="col-6 button button-outline">
             Back to home
@@ -92,6 +97,7 @@ export default {
   props: ['open', 'form'],
   data() {
     return {
+      isCompleted: false,
       isLoading: false,
       isApproved: true,
       isConfirmed: false,
@@ -135,7 +141,7 @@ export default {
         };
         await this.writeMintPotion(payload);
         await this.loadPotions();
-        this.$router.push({ name: 'potions' });
+        this.isCompleted = true;
       } else {
         await this.approve();
         this.isApproved = true;
@@ -149,6 +155,7 @@ export default {
       this.price = this.currentPrice;
       this.isLoading = false;
       this.isConfirmed = false;
+      this.isCompleted = false;
     },
     autoPrice(value) {
       if (value) this.price = this.currentPrice;

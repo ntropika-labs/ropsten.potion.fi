@@ -32,7 +32,8 @@ const state = {
   network: {},
   exchangeRates: {},
   potions: [],
-  allowances: {}
+  allowances: {},
+  balances: {}
 };
 
 const mutations = {
@@ -180,6 +181,13 @@ const actions = {
     console.log(tx.hash);
     await tx.wait();
     // await new Promise(resolve => setTimeout(resolve, 1e3));
+  },
+  async loadBalanceIn({ commit }, payload) {
+    const potionToken = new ethers.Contract(payload, synthAbi, provider);
+    const balance = await potionToken.balanceOf(state.address);
+    const balances = state.balances;
+    balances[payload] = parseFloat(ethers.utils.formatEther(balance));
+    commit('set', { balances });
   }
 };
 

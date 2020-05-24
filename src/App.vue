@@ -21,7 +21,7 @@ export default {
   },
   async created() {
     this.init();
-    // await getBlackScholes('bitcoin').then(blackScholes => console.log(blackScholes));
+    await getBlackScholes('bitcoin').then(blackScholes => console.log(blackScholes));
   }
 };
 </script>

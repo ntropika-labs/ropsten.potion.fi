@@ -6,7 +6,7 @@
         class="d-block py-3 px-4 text-left highlight d-flex"
         v-for="(potion, i) in settings.potions"
         :key="i"
-        @click="select(potion)"
+        @click="select(potion, i)"
       >
         <div class="flex-auto">
           <h3 class="mb-2">Potion #{{ i + 1 }}</h3>
@@ -37,7 +37,8 @@ export default {
     ...mapState(['settings'])
   },
   methods: {
-    select(value) {
+    select(value, i) {
+      value.i = i;
       this.$emit('input', value);
       this.$emit('close');
     }

@@ -29,7 +29,7 @@
       </div>
       <div class="pt-4 pb-10">
         <h1 class="mx-auto container-md p-responsive">
-          Welcome crypto-magician, protect your fund with hedge potions.
+          Welcome crypto-magician, protect your assets with put potions.
         </h1>
       </div>
     </div>

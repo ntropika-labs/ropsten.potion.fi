@@ -2,7 +2,10 @@
   <span>
     <a class="input" @click="modalOpen = true">
       <span v-if="input">
-        {{ input.asset }}, strike price: ${{ $n(input.mintSprice) }} ({{ input.expiry | formatTs }})
+        Potion #{{ input.i + 1 }}:
+        <Ticker :id="coingecko[input.asset]" type="short" class="ml-1" />
+        at ${{ $n(input.mintSprice) }} on
+        {{ input.expiry | formatTs }}
       </span>
       <template v-else>Your potions ({{ potions.length }})</template>
     </a>
@@ -11,13 +14,16 @@
 </template>
 
 <script>
+import coingecko from '@/helpers/coingecko.json';
+
 export default {
   props: ['value'],
   data() {
     return {
-      input: null,
+      input: '',
       modalOpen: false,
-      potions: this.$store.state.settings.potions
+      potions: this.$store.state.settings.potions,
+      coingecko
     };
   },
   watch: {

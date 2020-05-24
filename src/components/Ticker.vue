@@ -5,8 +5,13 @@
       height="22"
       class="mr-1 mt-n1 v-align-middle"
     />
-    {{ assets[id].name }}
-    ({{ assets[id].ticker }})
+    <template v-if="type === 'short'">
+      {{ assets[id].ticker }}
+    </template>
+    <template v-else>
+      {{ assets[id].name }}
+      ({{ assets[id].ticker }})
+    </template>
   </span>
 </template>
 
@@ -14,7 +19,7 @@
 import assets from '@/helpers/assets.json';
 
 export default {
-  props: ['id', 'form'],
+  props: ['id', 'form', 'type'],
   data() {
     return { assets };
   }
