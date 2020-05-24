@@ -6,12 +6,12 @@ import {
   getExchangeRatesFromCoinGecko,
   getPotions,
   getAllowances,
-  revitalisePotion
+  revitalisePotion,
+  withdrawPotion
 } from '@/helpers/utils';
 import assets from '@/helpers/assets.json';
 import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
 import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
-import { abi as potionAbi } from '@/helpers/abi/Potion.json';
 import { abi as synthAbi } from '@/helpers/abi/Synthetic.json';
 
 const parseEther = ethers.utils.parseEther;
@@ -97,7 +97,7 @@ const actions = {
   },
   async loadAllowances({ commit }) {
     const daiAddress = process.env.VUE_APP_DAI_ADDRESS;
-    const addresses = [daiAddress]
+    const addresses = [daiAddress];
     Object.entries(state.potions).forEach(potion => {
       // @ts-ignore
       addresses.push(potion[1].address);
@@ -108,6 +108,9 @@ const actions = {
   },
   async revitalisePotion({ commit }, payload) {
     await revitalisePotion(payload);
+  },
+  async withdrawPotion({ commit }, payload) {
+    await withdrawPotion(payload);
   },
   async approve({ commit }) {
     const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;

@@ -137,10 +137,9 @@ export default {
         await this.loadPotions();
         this.$router.push({ name: 'potions' });
       } else {
-        this.approve().then(() => {
-          this.isApproved = true;
-          this.isLoading = false;
-        });
+        await this.approve();
+        this.isApproved = true;
+        this.isLoading = false;
       }
     }
   },

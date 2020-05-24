@@ -2,21 +2,15 @@
   <Modal :open="open" @close="$emit('close')">
     <div class="modal-body px-4">
       <img src="~/@/assets/top.svg" class="mb-2" />
-      <h2 class="mb-5">Select wallet</h2>
-      <button
-        class="d-flex text-left mb-7 button button-select"
-        @click="service = !service ? 'metamask' : ''"
-        :class="{ active: service === 'metamask' }"
-      >
-        <span class="flex-auto">MetaMask</span>
-        <img src="~/@/assets/metamask.svg" height="30" class="mt-2 pt-1" />
-      </button>
+      <h2 class="mb-5">Get your energy back</h2>
+      <p class="mb-2">Your withdraw</p>
+      <h1 class="text-primary mb-5">{{ form.potion.amountRev }} ETH</h1>
       <div class="d-flex mb-2">
         <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>
         <button
           class="button button-primary col-6 ml-2"
-          @click="handleLogin"
-          :disabled="!service || isLoading"
+          @click="handleSubmit"
+          :disabled="isLoading"
         >
           <VueLoadingIndicator v-if="isLoading" class="big" />
           <template v-else>Confirm</template>
@@ -30,7 +24,7 @@
 import { mapActions } from 'vuex';
 
 export default {
-  props: ['open'],
+  props: ['open', 'form'],
   data() {
     return {
       isLoading: false,
@@ -38,10 +32,14 @@ export default {
     };
   },
   methods: {
-    ...mapActions(['login']),
-    async handleLogin() {
+    ...mapActions(['withdrawPotion']),
+    async handleSubmit() {
       this.isLoading = true;
-      await this.login();
+      const payload = {
+        revitalID: this.form.potion.revitID,
+        potionAddress: this.form.potion.contractAddress
+      };
+      await this.withdrawPotion(payload);
       this.$emit('close');
     }
   }

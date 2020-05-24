@@ -12,10 +12,11 @@
             <div class="mb-4">
               Expiry date<span class="float-right">{{ form.potion.expiry | formatTs }}</span>
             </div>
-            <div class="mb-5">
+            <div class="mb-4">
               Asset
               <Ticker :id="coingecko[form.potion.asset]" class="float-right" />
             </div>
+            <div class="mb-5">Available quantity<span class="float-right">X</span></div>
           </div>
           <h2 class="mb-5 text-center">Balance revitalization</h2>
           <div class="mb-4">
