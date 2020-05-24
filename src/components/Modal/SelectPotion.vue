@@ -13,9 +13,9 @@
           <div class="mb-1">
             <b>{{ potion.asset }}</b>
           </div>
-          ${{ $n(potion.mintSprice) }}
+          <div class="mb-1">Strike: ${{ $n(potion.mintSprice) }}</div>
+          <div class="mb-1">Expiry: {{ potion.expiry | formatTs }}</div>
         </div>
-        <p class="mt-2">{{ potion.expiry | formatTs }}</p>
       </a>
     </div>
   </Modal>

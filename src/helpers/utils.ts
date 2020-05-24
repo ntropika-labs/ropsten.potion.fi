@@ -98,10 +98,10 @@ export async function revitalisePotion(payload) {
   const tx = await factoryWithSigner.revitalisePotion(
     payload.address,
     poolLpAddress,
-    { rawValue: ethers.utils.parseEther(payload.address) },
-    { rawValue: ethers.utils.parseEther(payload.address) },
-    { rawValue: ethers.utils.parseEther(payload.address) },
-    { rawValue: ethers.utils.parseEther(payload.address) },
+    { rawValue: ethers.utils.parseEther('1') }, // nTokens
+    { rawValue: ethers.utils.parseEther('1') }, // assetPrice
+    { rawValue: ethers.utils.parseEther('1') }, // dvmBond
+    { rawValue: ethers.utils.parseEther('1') }, // finalDeposit
     { gasLimit: 7e6, gasPrice: ethers.utils.parseUnits('20', 'gwei') }
   );
   console.log(tx.hash);

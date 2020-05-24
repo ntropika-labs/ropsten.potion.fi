@@ -3,6 +3,7 @@
     <div class="modal-body px-4">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
       <h2 class="mb-5">Your revitalization</h2>
+      {{ JSON.stringify(form.potion) }}
       <div class="text-left">
         <div class="border-bottom mb-5">
           <div class="mb-4">
