@@ -1,0 +1,27 @@
+{
+  "bitcoin": {
+    "name": "Bitcoin",
+    "ticker": "BTC",
+    "coingeckoId": "bitcoin"
+  },
+  "ethereum": {
+    "name": "Ethereum",
+    "ticker": "ETH",
+    "coingeckoId": "ethereum"
+  },
+  "chainlink": {
+    "name": "Chainlink",
+    "ticker": "LINK",
+    "coingeckoId": "chainlink"
+  },
+  "maker": {
+    "name": "Maker",
+    "ticker": "MKR",
+    "coingeckoId": "maker"
+  },
+  "basic-attention-token": {
+    "name": "Basic Attention Token",
+    "ticker": "BAT",
+    "coingeckoId": "basic-attention-token"
+  }
+}

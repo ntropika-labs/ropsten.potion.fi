@@ -21,7 +21,7 @@
         <a
           class="day border-bottom border-right selectable"
           :class="{ selected: input.includes(formatDate(year, month, day)) }"
-          v-if="new Date(year, month, day) > new Date()"
+          v-if="isSelectable(year, month, day)"
           v-text="day"
           @click="toggleDay(year, month, day)"
         />
@@ -70,6 +70,11 @@ export default {
     toggleDay(year, month, day) {
       this.input = this.formatDate(year, month, day);
       this.$emit('input', this.input);
+    },
+    isSelectable(year, month, day) {
+      const in30Days = new Date();
+      in30Days.setDate(in30Days.getDate() + 30);
+      return new Date(year, month, day) > new Date() && new Date(year, month, day) < in30Days;
     }
   }
 };

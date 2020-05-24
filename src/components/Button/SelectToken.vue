@@ -1,7 +1,7 @@
 <template>
   <span>
     <a class="input" @click="modalOpen = true">
-      <span v-if="input" v-text="input" />
+      <Ticker v-if="input" :id="input" />
       <template v-else>Asset</template>
     </a>
     <ModalSelectToken :open="modalOpen" @close="modalOpen = false" @input="input = $event" />

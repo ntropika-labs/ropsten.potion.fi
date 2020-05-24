@@ -4,16 +4,16 @@
       <h2 class="mb-5">Select asset</h2>
       <a
         class="d-block py-3 px-4 text-left highlight d-flex"
-        v-for="(token, i) in tokens"
+        v-for="(asset, i) in assets"
         :key="i"
-        @click="select(token.ticker)"
+        @click="select(i)"
       >
-        <img :src="require(`@/assets/${token.ticker}.png`)" height="40" class="mr-3" />
+        <img :src="require(`@/assets/${asset.ticker}.png`)" height="40" class="mr-3" />
         <div>
           <div class="mb-1">
-            <b>{{ token.name }}</b>
+            <b>{{ asset.name }}</b>
           </div>
-          {{ token.ticker }}
+          {{ asset.ticker }}
         </div>
       </a>
     </div>
@@ -21,20 +21,14 @@
 </template>
 
 <script>
-const tokens = [
-  { name: 'Bitcoin', ticker: 'BTC' },
-  { name: 'Ethereum', ticker: 'ETH' },
-  { name: 'Chainlink', ticker: 'LINK' },
-  { name: 'Maker', ticker: 'MKR' },
-  { name: 'Basic Attention Token', ticker: 'BAT' }
-];
+import assets from '@/helpers/assets.json';
 
 export default {
   props: ['open'],
   data() {
     return {
       input: '',
-      tokens
+      assets
     };
   },
   methods: {

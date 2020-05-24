@@ -33,6 +33,7 @@
     </form>
     <ModalLogin :open="modalLoginOpen" @close="modalLoginOpen = false" />
     <ModalMakePotion
+      v-if="isValid"
       :open="modalMakePotionOpen"
       :form="form"
       @close="modalMakePotionOpen = false"

@@ -9,8 +9,14 @@
             <div class="mb-4">
               Strike price<span class="float-right">${{ $n(form.strike) }}</span>
             </div>
-            <div class="mb-4">Expiry date<span class="float-right" v-text="form.expiry" /></div>
-            <div class="mb-4">Asset<span class="float-right" v-text="form.asset" /></div>
+            <div class="mb-4">
+              Expiry date
+              <span class="float-right" v-text="form.expiry" />
+            </div>
+            <div class="mb-4">
+              Asset
+              <Ticker class="float-right" :id="form.asset" />
+            </div>
             <div class="mb-4">
               Auto price
               <span class="float-right">
@@ -23,10 +29,16 @@
                 type="number"
                 class="input mb-3"
                 placeholder="Price"
-                :value="currentPrice"
+                v-model="price"
               />
               <h6 v-if="!autoPrice">
-                Using non-market prices may result in losses. <a>Learn more</a>
+                Using non-market prices may result in losses.
+                <a
+                  href="https://potion.gitbook.io/docs/exercising-a-potion/buying-a-potion"
+                  target="_blank"
+                >
+                  Learn more
+                </a>
               </h6>
             </div>
           </div>
@@ -34,10 +46,10 @@
             Quantity<span class="float-right">{{ $n(form.quantity) }}</span>
           </div>
           <div class="mb-4">
-            Price per potion<span class="float-right">{{ $n(blackScholes) }} DAI</span>
+            Price per potion<span class="float-right">{{ $n(premiumDeposit) }} DAI</span>
           </div>
           <div class="mb-5 text-bold text-primary">
-            Total price<span class="float-right">{{ $n(form.quantity * 5) }} DAI</span>
+            Total price<span class="float-right">{{ $n(form.quantity * premiumDeposit) }} DAI</span>
           </div>
         </div>
         <h2 class="mb-4">Want to purchase?</h2>
@@ -70,26 +82,36 @@
 <script>
 import bs from 'black-scholes';
 import { mapActions, mapState } from 'vuex';
+import { getPremiumDeposit } from '../../helpers/utils';
 
 export default {
   props: ['open', 'form'],
   data() {
     return {
       isLoading: false,
-      isApproved: true,
+      isApproved: false,
       isConfirmed: false,
-      autoPrice: true
+      autoPrice: true,
+      price: 0
     };
   },
   computed: {
     ...mapState(['settings']),
     currentPrice() {
-      return this.settings.exchangeRates.bitcoin
-        ? this.settings.exchangeRates.bitcoin.usd.toFixed(0)
+      return this.settings.exchangeRates[this.form.asset] &&
+        this.settings.exchangeRates[this.form.asset].usd
+        ? this.settings.exchangeRates[this.form.asset].usd.toFixed(2)
         : 0;
     },
-    blackScholes() {
-      return bs.blackScholes(this.currentPrice, this.form.strike, (1 / 365) * 7, 0.2, 0, 'put');
+    daysToExpiry() {
+      const oneDay = 24 * 60 * 60 * 1e3;
+      const [year, month, day] = this.form.expiry.split('-');
+      const today = new Date();
+      const expiryDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day) + 1);
+      return Math.round(Math.abs((today - expiryDate) / oneDay));
+    },
+    premiumDeposit() {
+      return getPremiumDeposit(this.form.strike, this.price, this.daysToExpiry);
     }
   },
   methods: {
@@ -107,6 +129,17 @@ export default {
           this.isLoading = false;
         });
       }
+    }
+  },
+  watch: {
+    open(value) {
+      this.autoPrice = true;
+      this.price = this.currentPrice;
+      this.isLoading = false;
+      this.isConfirmed = false;
+    },
+    autoPrice(value) {
+      if (value) this.price = this.currentPrice;
     }
   }
 };

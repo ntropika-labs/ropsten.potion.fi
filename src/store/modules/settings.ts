@@ -4,6 +4,8 @@ import store from '@/store';
 import provider from '@/helpers/provider';
 import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
 import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
+import { getExchangeRatesFromCoinGecko } from '@/helpers/utils';
+import assets from '@/helpers/assets.json';
 
 const parseEther = ethers.utils.parseEther;
 
@@ -35,6 +37,7 @@ const mutations = {
 const actions = {
   init: async ({ commit, dispatch }) => {
     commit('set', { loading: true });
+    await dispatch('getExchangeRates');
     if (provider) {
       try {
         const signer = provider.getSigner();
@@ -44,7 +47,6 @@ const actions = {
         console.log(e);
       }
     }
-    await dispatch('getExchangeRates');
     commit('set', { loading: false });
   },
   login: async ({ commit }) => {
@@ -72,9 +74,8 @@ const actions = {
     commit('set', { loading: payload });
   },
   async getExchangeRates({ commit }) {
-    const uri = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd';
-    const json = await fetch(uri).then(res => res.json());
-    commit('set', { exchangeRates: json });
+    const exchangeRates = await getExchangeRatesFromCoinGecko();
+    commit('set', { exchangeRates });
   },
   async approve({ commit }) {
     const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
@@ -98,16 +99,13 @@ const actions = {
     // @ts-ignore
     const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
     const factoryWithSigner = factory.connect(signer);
-    const priceFeedIdentifier = ethers.utils.formatBytes32String(
-      ethers.utils.hexlify(ethers.utils.toUtf8Bytes('UMATEST'))
-    );
     const params = {
       expirationTimestamp: '1590969600',
       withdrawalLiveness: '1',
       collateralAddress: daiAddress,
       finderAddress,
       tokenFactoryAddress,
-      priceFeedIdentifier,
+      priceFeedIdentifier: 'UMATEST',
       syntheticName: 'ETH Potion Token June',
       syntheticSymbol: 'GOLDPOT6',
       liquidationLiveness: '1',
@@ -118,7 +116,6 @@ const actions = {
       strikePrice: { rawValue: parseEther('100') },
       timerAddress
     };
-    console.log(params, poolLpAddress);
     const tx = await factoryWithSigner.writeMintPotion(
       params,
       poolLpAddress,
