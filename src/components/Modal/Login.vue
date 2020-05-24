@@ -1,6 +1,6 @@
 <template>
   <Modal :open="open" @close="$emit('close')">
-    <div class="modal-body">
+    <div class="modal-body px-4">
       <img src="~/@/assets/top.svg" class="mb-2" />
       <h2 class="mb-5">Select wallet</h2>
       <button

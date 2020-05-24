@@ -59,7 +59,7 @@ export async function getPotion(address) {
   const factoryContract = new ethers.Contract(factoryAddress, factoryAbi, provider);
   const potion = await factoryContract.getPotionData(potionContract.address);
   return {
-    address,
+    address, // contract address ?
     asset: potion.asset,
     mintAprice: ethers.utils.formatEther(potion.mintAprice.rawValue),
     mintSprice: ethers.utils.formatEther(potion.mintSprice.rawValue),

@@ -1,5 +1,10 @@
 <template>
   <span>
+    <img
+      :src="require(`@/assets/${assets[id].ticker}.png`)"
+      height="22"
+      class="mr-1 mt-n1 v-align-middle"
+    />
     {{ assets[id].name }}
     ({{ assets[id].ticker }})
   </span>

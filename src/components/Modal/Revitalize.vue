@@ -2,81 +2,110 @@
   <Modal :open="open" @close="$emit('close')">
     <div class="modal-body px-4">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
-      <h2 class="mb-5">Your revitalization</h2>
-      {{ JSON.stringify(form.potion) }}
-      <div class="text-left">
-        <div class="border-bottom mb-5">
+      <div v-if="!isConfirmed">
+        <h2 class="mb-5">Your revitalization</h2>
+        <div class="text-left">
+          <div class="border-bottom mb-5">
+            <div class="mb-4">
+              Strike price<span class="float-right">${{ $n(form.potion.mintSprice) }}</span>
+            </div>
+            <div class="mb-4">
+              Expiry date<span class="float-right">{{ form.potion.expiry | formatTs }}</span>
+            </div>
+            <div class="mb-5">
+              Asset
+              <Ticker :id="coingecko[form.potion.asset]" class="float-right" />
+            </div>
+          </div>
+          <h2 class="mb-5 text-center">Balance revitalization</h2>
           <div class="mb-4">
-            Strike price<span class="float-right">${{ $n(form.potion.mintSprice) }}</span>
+            <input type="number" class="input" placeholder="Quantity" v-model="quantity" />
+          </div>
+          <div class="mb-3">
+            Auto asset price
+            <span class="float-right">
+              <VueSwitch v-model="autoPrice" />
+            </span>
           </div>
           <div class="mb-4">
-            Expiry date<span class="float-right">{{ form.potion.expiry | formatTs }}</span>
+            <input
+              :readonly="autoPrice"
+              type="number"
+              class="input mb-3"
+              placeholder="Price"
+              v-model="price"
+            />
+            <h6 v-if="!autoPrice">
+              Using non-market prices may result in losses.
+              <a
+                href="https://potion.gitbook.io/docs/exercising-a-potion/buying-a-potion"
+                target="_blank"
+              >
+                Learn more
+              </a>
+            </h6>
           </div>
-          <div class="mb-5">Asset<span class="float-right" v-text="form.potion.asset" /></div>
+          <div class="mb-3">
+            Auto price per potion
+            <span class="float-right">
+              <VueSwitch v-model="autoPricePerPotion" />
+            </span>
+          </div>
+          <div class="mb-5">
+            <input
+              :readonly="autoPricePerPotion"
+              type="number"
+              class="input mb-3"
+              placeholder="Price per potion"
+              v-model="pricePerPotion"
+            />
+            <h6 v-if="!autoPricePerPotion">
+              Using non-market prices may result in losses.
+              <a
+                href="https://potion.gitbook.io/docs/exercising-a-potion/buying-a-potion"
+                target="_blank"
+              >
+                Learn more
+              </a>
+            </h6>
+          </div>
         </div>
-        <h2 class="mb-5 text-center">Balance revitalization</h2>
-        <div class="mb-4">
-          <input type="number" class="input" placeholder="Quantity" v-model="quantity" />
-        </div>
-        <div class="mb-3">
-          Auto asset price
-          <span class="float-right">
-            <VueSwitch v-model="autoPrice" />
-          </span>
-        </div>
-        <div class="mb-4">
-          <input
-            :readonly="autoPrice"
-            type="number"
-            class="input mb-3"
-            placeholder="Price"
-            v-model="price"
-          />
-          <h6 v-if="!autoPrice">
-            Using non-market prices may result in losses.
-            <a
-              href="https://potion.gitbook.io/docs/exercising-a-potion/buying-a-potion"
-              target="_blank"
-            >
-              Learn more
-            </a>
-          </h6>
-        </div>
-        <div class="mb-3">
-          Auto price per potion
-          <span class="float-right">
-            <VueSwitch v-model="autoPricePerPotion" />
-          </span>
-        </div>
-        <div class="mb-5">
-          <input
-            :readonly="autoPricePerPotion"
-            type="number"
-            class="input mb-3"
-            placeholder="Price per potion"
-            v-model="pricePerPotion"
-          />
-          <h6 v-if="!autoPricePerPotion">
-            Using non-market prices may result in losses.
-            <a
-              href="https://potion.gitbook.io/docs/exercising-a-potion/buying-a-potion"
-              target="_blank"
-            >
-              Learn more
-            </a>
-          </h6>
+        <h2 class="mb-4">Want to use?</h2>
+        <div class="d-flex mb-2">
+          <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>
+          <button
+            class="button button-primary col-6 ml-2"
+            :disabled="!price || isLoading"
+            @click="!isApproved ? handleApprovePotion() : handleRevitalisePotion()"
+          >
+            <VueLoadingIndicator v-if="isLoading" class="big" />
+            <template v-else>
+              <template v-if="isApproved">Confirm</template>
+              <template v-else>Unlock {{ form.potion.asset }}POT</template>
+            </template>
+          </button>
         </div>
       </div>
-      <h2 class="mb-4">Want to use?</h2>
-      <div class="d-flex mb-2">
-        <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>
-        <button class="button button-primary col-6 ml-2" :disabled="!price" @click="handleSubmit">
-          <VueLoadingIndicator v-if="isLoading" class="big" />
-          <template v-else>
-            <template v-if="isApproved">Confirm</template>
-            <template v-else>Unlock {{ form.potion.asset }}POT</template>
-          </template>
-        </button>
+      <div v-else>
+        <h2 class="mb-5">Be careful</h2>
+        <p class="mb-5">
+          In order to liquidate you must stake DAI. If you entered wrong values and are disputed,
+          you may lose these as penalty.
+        </p>
+        <p class="mb-2">Your stake</p>
+        <h1 class="text-primary mb-5">5 DAI</h1>
+        <h2 class="mb-5">Want to proceed?</h2>
+        <div class="d-flex mb-2">
+          <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>
+          <button
+            class="button button-primary col-6 ml-2"
+            :disabled="isLoading"
+            @click="handleRevitalisePotion"
+          >
+            <VueLoadingIndicator v-if="isLoading" class="big" />
+            <template v-else>Confirm</template>
+          </button>
+        </div>
       </div>
     </div>
   </Modal>
@@ -91,12 +120,14 @@ export default {
   data() {
     return {
       isApproved: false,
+      isConfirmed: false,
       isLoading: false,
       quantity: '',
       autoPrice: true,
       autoPricePerPotion: true,
       price: '',
-      pricePerPotion: ''
+      pricePerPotion: '',
+      coingecko
     };
   },
   computed: {
@@ -116,7 +147,8 @@ export default {
       this.isConfirmed = false;
       const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
       this.isApproved = !!allowance;
-      this.isApproved = true;
+      this.isApproved = false;
+      this.isConfirmed = false;
     },
     autoPrice(value) {
       if (value) this.price = this.currentPrice;
@@ -124,19 +156,23 @@ export default {
   },
   methods: {
     ...mapActions(['approvePotion', 'revitalisePotion']),
-    async handleSubmit() {
+    async handleApprovePotion() {
       this.isLoading = true;
-      if (!this.isApproved) {
-        console.log(this.form.potion.address);
-        await this.approvePotion(this.form.potion.address);
-        this.isApproved = true;
-      } else {
-        const payload = this.form.potion;
-        payload.price = this.price;
-        await this.revitalisePotion(payload);
-        this.isConfirmed = true;
-      }
+      console.log(this.form.potion.address);
+      await this.approvePotion(this.form.potion.address);
+      this.isApproved = true;
       this.isLoading = false;
+    },
+    async handleRevitalisePotion() {
+      this.isLoading = true;
+      const payload = this.form.potion;
+      payload.price = this.price;
+      await this.revitalisePotion(payload);
+      this.isConfirmed = true;
+      this.isLoading = false;
+    },
+    async handleStakeDai() {
+      alert('Stake DAI');
     }
   }
 };

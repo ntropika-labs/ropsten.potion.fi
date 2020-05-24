@@ -79,6 +79,8 @@ const actions = {
       } catch (error) {
         console.error(error);
       }
+    } else {
+      console.error('This website require MetaMask');
     }
   },
   loading: ({ commit }, payload) => {
