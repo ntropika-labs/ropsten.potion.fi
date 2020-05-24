@@ -2,7 +2,6 @@
   <Modal :open="open" @close="$emit('close')">
     <div class="modal-body px-4">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
-      {{ JSON.stringify(form.potion) }}
       <div v-if="!isConfirmed">
         <h2 class="mb-5">Your revitalization</h2>
         <div class="text-left">
@@ -148,7 +147,7 @@ export default {
       this.isConfirmed = false;
       const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
       this.isApproved = !!allowance;
-      this.isApproved = false;
+      this.isApproved = true;
       this.isConfirmed = false;
     },
     autoPrice(value) {

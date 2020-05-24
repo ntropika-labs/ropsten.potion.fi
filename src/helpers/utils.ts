@@ -61,6 +61,7 @@ export async function getPotion(address) {
   const potion = await factoryContract.getPotionData(potionContract.address);
   const potionToken = new ethers.Contract(await potionContract.tokenCurrency(), expierc20Abi, provider);
   return {
+    contractAddress: address,
     address: potionToken.address,
     asset: potion.asset,
     mintAprice: ethers.utils.formatEther(potion.mintAprice.rawValue),
@@ -91,6 +92,7 @@ export async function getAllowances(address) {
 }
 
 export async function revitalisePotion(payload) {
+  console.log('This is the payload', payload);
   const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
   const poolLpAddress = process.env.VUE_APP_POOL_LP_ADDRESS;
   const signer = provider.getSigner();
@@ -98,7 +100,7 @@ export async function revitalisePotion(payload) {
   const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
   const factoryWithSigner = factory.connect(signer);
   const tx = await factoryWithSigner.revitalisePotion(
-    payload.address,
+    payload.contractAddress,
     poolLpAddress,
     { rawValue: ethers.utils.parseEther('1') }, // nTokens
     { rawValue: ethers.utils.parseEther('1') }, // assetPrice
