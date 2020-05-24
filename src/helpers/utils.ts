@@ -1,5 +1,9 @@
+import provider from '@/helpers/provider';
 import assets from '@/helpers/assets.json';
 import premium from '@/helpers/premium.json';
+import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
+import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
+import { ethers } from 'ethers';
 
 export function shorten(str) {
   if (str.length < 10) return str;
@@ -39,4 +43,20 @@ export function getPremiumDeposit(strike, price, days) {
     if (otm > parseFloat(p[0])) premiumDeposit = p[1][days.toString()] * strike;
   });
   return premiumDeposit;
+}
+
+export async function getPotions(address) {
+  const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
+  // @ts-ignore
+  const contract = new ethers.Contract(factoryAddress, factoryAbi, provider);
+  return await contract.getBuyerPotions(address);
+}
+
+export async function getAllowances(address) {
+  const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
+  const daiAddress = process.env.VUE_APP_DAI_ADDRESS;
+  // @ts-ignore
+  const contract = new ethers.Contract(daiAddress, ierc20Abi, provider);
+  const daiAllowance = await contract.allowance(address, factoryAddress);
+  return { DAI: ethers.utils.formatEther(daiAllowance) };
 }

@@ -6,13 +6,21 @@
     <form @submit.prevent="handleSubmit" class="form">
       <div class="mb-4">
         <ButtonSelectToken class="d-block mb-4" v-model="form.asset" />
-        <input type="number" class="input mb-4" placeholder="Quantity" v-model="form.quantity" />
+        <input
+          type="number"
+          class="input mb-4"
+          placeholder="Quantity"
+          step="0.001"
+          v-model="form.quantity"
+        />
         <div class="d-flex">
           <div class="col-6 mr-2">
             <input
               type="number"
               class="input mb-4"
               placeholder="Strike price"
+              step="0.001"
+              :max="maxStrike"
               v-model="form.strike"
             />
           </div>
@@ -60,7 +68,13 @@ export default {
   computed: {
     ...mapState(['settings']),
     isValid() {
-      return this.form.asset && this.form.quantity && this.form.strike && this.form.expiry;
+      return (
+        this.form.asset && parseFloat(this.form.quantity) && this.form.strike && this.form.expiry
+      );
+    },
+    maxStrike() {
+      const exchangeRate = this.settings.exchangeRates[this.form.asset];
+      return exchangeRate && exchangeRate.usd ? exchangeRate.usd : 1e9;
     }
   },
   methods: {

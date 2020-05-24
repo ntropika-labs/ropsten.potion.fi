@@ -89,7 +89,7 @@ export default {
   data() {
     return {
       isLoading: false,
-      isApproved: false,
+      isApproved: true,
       isConfirmed: false,
       autoPrice: true,
       price: 0
@@ -132,7 +132,7 @@ export default {
     }
   },
   watch: {
-    open(value) {
+    open() {
       this.autoPrice = true;
       this.price = this.currentPrice;
       this.isLoading = false;
@@ -141,6 +141,10 @@ export default {
     autoPrice(value) {
       if (value) this.price = this.currentPrice;
     }
+  },
+  created() {
+    const daiAllowance = parseFloat(this.settings.allowances.DAI || '0');
+    this.isApproved = !!daiAllowance;
   }
 };
 </script>

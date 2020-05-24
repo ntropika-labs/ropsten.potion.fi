@@ -4,7 +4,7 @@
       <span v-if="input">
         {{ input.token }}, strike price: ${{ $n(input.strike) }} ({{ input.expiry }})
       </span>
-      <template v-else>Your potions</template>
+      <template v-else>Your potions ({{ potions.length }})</template>
     </a>
     <ModalSelectPotion :open="modalOpen" @close="modalOpen = false" @input="input = $event" />
   </span>
@@ -16,7 +16,8 @@ export default {
   data() {
     return {
       input: null,
-      modalOpen: false
+      modalOpen: false,
+      potions: this.$store.state.settings.potions
     };
   },
   watch: {

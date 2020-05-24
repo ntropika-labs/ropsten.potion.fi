@@ -26,7 +26,8 @@ export default {
         potion: ''
       },
       modalLoginOpen: false,
-      modalRevitalizeOpen: false
+      modalRevitalizeOpen: false,
+      potions: this.$store.state.settings.potions
     };
   }
 };

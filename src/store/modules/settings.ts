@@ -2,10 +2,9 @@ import Vue from 'vue';
 import { ethers } from 'ethers';
 import store from '@/store';
 import provider from '@/helpers/provider';
+import { getExchangeRatesFromCoinGecko, getPotions, getAllowances } from '@/helpers/utils';
 import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
 import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
-import { getExchangeRatesFromCoinGecko } from '@/helpers/utils';
-import assets from '@/helpers/assets.json';
 
 const parseEther = ethers.utils.parseEther;
 
@@ -23,7 +22,9 @@ const state = {
   name: '',
   balance: 0,
   network: {},
-  exchangeRates: {}
+  exchangeRates: {},
+  potions: [],
+  allowances: {}
 };
 
 const mutations = {
@@ -49,7 +50,7 @@ const actions = {
     }
     commit('set', { loading: false });
   },
-  login: async ({ commit }) => {
+  login: async ({ commit, dispatch }) => {
     if (provider) {
       try {
         await ethereum.enable();
@@ -58,6 +59,8 @@ const actions = {
         const name = await provider.lookupAddress(address);
         const balance = await provider.getBalance(address);
         const network = await provider.getNetwork();
+        await dispatch('loadPotions', address);
+        await dispatch('loadAllowances', address);
         commit('set', {
           address,
           name,
@@ -76,6 +79,16 @@ const actions = {
   async getExchangeRates({ commit }) {
     const exchangeRates = await getExchangeRatesFromCoinGecko();
     commit('set', { exchangeRates });
+  },
+  async loadPotions({ commit }, payload) {
+    const potions = await getPotions(payload);
+    console.log('Your potions', potions);
+    commit('set', { potions });
+  },
+  async loadAllowances({ commit }, payload) {
+    const allowances = await getAllowances(payload);
+    console.log('Your allowances', allowances);
+    commit('set', { allowances });
   },
   async approve({ commit }) {
     const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
@@ -114,7 +127,8 @@ const actions = {
       sponsorDisputeRewardPct: { rawValue: parseEther('0.1') },
       disputerDisputeRewardPct: { rawValue: parseEther('0.1') },
       strikePrice: { rawValue: parseEther('100') },
-      timerAddress
+      timerAddress,
+      assetPrice: { rawValue: parseEther('200') }
     };
     const tx = await factoryWithSigner.writeMintPotion(
       params,
