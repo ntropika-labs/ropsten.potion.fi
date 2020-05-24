@@ -2,10 +2,17 @@ import Vue from 'vue';
 import { ethers } from 'ethers';
 import store from '@/store';
 import provider from '@/helpers/provider';
-import { getExchangeRatesFromCoinGecko, getPotions, getAllowances } from '@/helpers/utils';
+import {
+  getExchangeRatesFromCoinGecko,
+  getPotions,
+  getAllowances,
+  revitalisePotion
+} from '@/helpers/utils';
 import assets from '@/helpers/assets.json';
 import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
 import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
+import { abi as potionAbi } from '@/helpers/abi/Potion.json';
+import { abi as synthAbi } from '@/helpers/abi/Synthetic.json';
 
 const parseEther = ethers.utils.parseEther;
 
@@ -92,14 +99,28 @@ const actions = {
     console.log('Your allowances', allowances);
     commit('set', { allowances });
   },
+  async revitalisePotion({ commit }, payload) {
+    await revitalisePotion(payload);
+  },
   async approve({ commit }) {
     const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
-    const daiAddress = process.env.VUE_APP_DAI_ADDRESS;
+    const address = process.env.VUE_APP_DAI_ADDRESS;
     const signer = provider.getSigner();
     // @ts-ignore
-    const collateral = new ethers.Contract(daiAddress, ierc20Abi, provider);
-    const collateralWithSigner = collateral.connect(signer);
-    const tx = await collateralWithSigner.approve(factoryAddress, parseEther((1e9).toString()));
+    const erc20 = new ethers.Contract(address, ierc20Abi, provider);
+    const erc20WithSigner = erc20.connect(signer);
+    const tx = await erc20WithSigner.approve(factoryAddress, parseEther((1e9).toString()));
+    console.log(tx.hash);
+    await tx.wait();
+  },
+  async approvePotion({ commit }, address) {
+    const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
+    const signer = provider.getSigner();
+    // @ts-ignore
+    const potion = new ethers.Contract(address, potionAbi, provider);
+    const potionToken = new ethers.Contract(await potion.tokenCurrency(), synthAbi, provider);
+    const potionTokenWithSigner = potionToken.connect(signer);
+    const tx = await potionTokenWithSigner.approve(factoryAddress, parseEther((1e7).toString()));
     console.log(tx.hash);
     await tx.wait();
   },
@@ -117,10 +138,8 @@ const actions = {
     const ticker = assets[payload.asset].ticker;
 
     const [year, month, day] = payload.expiry.split('-');
-    const expiryDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    let expirationTimestamp = parseInt((expiryDate.getTime() / 1000).toString()).toString();
-    // console.log(expirationTimestamp, '1590969600');
-    expirationTimestamp = '1590969600';
+    const expiryDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day) + 1);
+    const expirationTimestamp = parseInt((expiryDate.getTime() / 1000).toString()).toString();
     const syntheticName = `${ticker} Potion ${payload.expiry}`;
     const syntheticSymbol = `${ticker}POT`;
     const params = {

@@ -87,3 +87,23 @@ export async function getAllowances(address) {
   const daiAllowance = await contract.allowance(address, factoryAddress);
   return { DAI: ethers.utils.formatEther(daiAllowance) };
 }
+
+export async function revitalisePotion(payload) {
+  const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
+  const poolLpAddress = process.env.VUE_APP_POOL_LP_ADDRESS;
+  const signer = provider.getSigner();
+  // @ts-ignore
+  const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
+  const factoryWithSigner = factory.connect(signer);
+  const tx = await factoryWithSigner.revitalisePotion(
+    payload.address,
+    poolLpAddress,
+    { rawValue: ethers.utils.parseEther(payload.address) },
+    { rawValue: ethers.utils.parseEther(payload.address) },
+    { rawValue: ethers.utils.parseEther(payload.address) },
+    { rawValue: ethers.utils.parseEther(payload.address) },
+    { gasLimit: 7e6, gasPrice: ethers.utils.parseUnits('20', 'gwei') }
+  );
+  console.log(tx.hash);
+  await tx.wait();
+}
