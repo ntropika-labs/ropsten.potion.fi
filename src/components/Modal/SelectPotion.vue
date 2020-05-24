@@ -8,13 +8,13 @@
         :key="i"
         @click="select(potion)"
       >
-        <img :src="require(`@/assets/${potion.asset}.png`)" height="40" class="mr-3" />
         <div class="flex-auto">
+          <h3 class="mb-2">Potion #{{ i + 1 }}</h3>
           <div class="mb-1">
-            <b>{{ potion.asset }}</b>
+            <b class="mr-2">Asset:</b> <Ticker :id="coingecko[potion.asset]" />
           </div>
-          <div class="mb-1">Strike: ${{ $n(potion.mintSprice) }}</div>
-          <div class="mb-1">Expiry: {{ potion.expiry | formatTs }}</div>
+          <div class="mb-1"><b class="mr-2">Strike price:</b> ${{ $n(potion.mintSprice) }}</div>
+          <div class="mb-1"><b class="mr-2">Expiry date:</b> {{ potion.expiry | formatTs }}</div>
         </div>
       </a>
     </div>
@@ -23,12 +23,14 @@
 
 <script>
 import { mapState } from 'vuex';
+import coingecko from '@/helpers/coingecko.json';
 
 export default {
   props: ['open'],
   data() {
     return {
-      input: ''
+      input: '',
+      coingecko
     };
   },
   computed: {

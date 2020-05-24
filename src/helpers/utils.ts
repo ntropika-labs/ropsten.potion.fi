@@ -4,6 +4,7 @@ import premium from '@/helpers/premium.json';
 import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
 import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
 import { abi as potionAbi } from '@/helpers/abi/Potion.json';
+import { abi as expierc20Abi } from '@/helpers/abi/ExpandedIERC20.json';
 import { ethers } from 'ethers';
 
 export function formatTs(ts) {
@@ -58,8 +59,9 @@ export async function getPotion(address) {
   // @ts-ignore
   const factoryContract = new ethers.Contract(factoryAddress, factoryAbi, provider);
   const potion = await factoryContract.getPotionData(potionContract.address);
+  const potionToken = new ethers.Contract(await potionContract.tokenCurrency(), expierc20Abi, provider);
   return {
-    address, // contract address ?
+    address: potionToken.address,
     asset: potion.asset,
     mintAprice: ethers.utils.formatEther(potion.mintAprice.rawValue),
     mintSprice: ethers.utils.formatEther(potion.mintSprice.rawValue),

@@ -119,8 +119,7 @@ const actions = {
     const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
     const signer = provider.getSigner();
     // @ts-ignore
-    const potion = new ethers.Contract(address, potionAbi, provider);
-    const potionToken = new ethers.Contract(await potion.tokenCurrency(), synthAbi, provider);
+    const potionToken = new ethers.Contract(address, synthAbi, provider);
     const potionTokenWithSigner = potionToken.connect(signer);
     const tx = await potionTokenWithSigner.approve(factoryAddress, parseEther((1e7).toString()));
     console.log(tx.hash);

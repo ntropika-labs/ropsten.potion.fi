@@ -2,6 +2,7 @@
   <Modal :open="open" @close="$emit('close')">
     <div class="modal-body px-4">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
+      {{ JSON.stringify(form.potion) }}
       <div v-if="!isConfirmed">
         <h2 class="mb-5">Your revitalization</h2>
         <div class="text-left">
@@ -159,16 +160,24 @@ export default {
     async handleApprovePotion() {
       this.isLoading = true;
       console.log(this.form.potion.address);
-      await this.approvePotion(this.form.potion.address);
-      this.isApproved = true;
+      try {
+        await this.approvePotion(this.form.potion.address);
+        this.isApproved = true;
+      } catch (e) {
+        console.error(e);
+      }
       this.isLoading = false;
     },
     async handleRevitalisePotion() {
       this.isLoading = true;
       const payload = this.form.potion;
       payload.price = this.price;
-      await this.revitalisePotion(payload);
-      this.isConfirmed = true;
+      try {
+        await this.revitalisePotion(payload);
+        this.isConfirmed = true;
+      } catch (e) {
+        console.error(e);
+      }
       this.isLoading = false;
     },
     async handleStakeDai() {
