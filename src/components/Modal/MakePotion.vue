@@ -17,7 +17,7 @@
               Asset
               <Ticker class="float-right" :id="form.asset" />
             </div>
-            <div class="mb-4">
+            <div class="mb-3">
               Auto price
               <span class="float-right">
                 <VueSwitch v-model="autoPrice" />

@@ -3,7 +3,14 @@ import assets from '@/helpers/assets.json';
 import premium from '@/helpers/premium.json';
 import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
 import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
+import { abi as potionAbi } from '@/helpers/abi/Potion.json';
 import { ethers } from 'ethers';
+
+export function formatTs(ts) {
+  if (!ts) return '';
+  const date = new Date(ts * 1000);
+  return date.toISOString().split('T')[0];
+}
 
 export function shorten(str) {
   if (str.length < 10) return str;
@@ -45,11 +52,31 @@ export function getPremiumDeposit(strike, price, days) {
   return premiumDeposit;
 }
 
+export async function getPotion(address) {
+  const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
+  const potionContract = new ethers.Contract(address, potionAbi, provider);
+  // @ts-ignore
+  const factoryContract = new ethers.Contract(factoryAddress, factoryAbi, provider);
+  const potion = await factoryContract.getPotionData(potionContract.address);
+  return {
+    address,
+    asset: potion.asset,
+    mintAprice: ethers.utils.formatEther(potion.mintAprice.rawValue),
+    mintSprice: ethers.utils.formatEther(potion.mintSprice.rawValue),
+    mintDepo: ethers.utils.formatEther(potion.mintDepo.rawValue),
+    expiry: potion.expiry.toString()
+  };
+}
+
 export async function getPotions(address) {
   const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
   // @ts-ignore
   const contract = new ethers.Contract(factoryAddress, factoryAbi, provider);
-  return await contract.getBuyerPotions(address);
+  const addresses = await contract.getBuyerPotions(address);
+  const promises = [];
+  // @ts-ignore
+  addresses.forEach(potionAddress => promises.push(getPotion(potionAddress)));
+  return await Promise.all(promises);
 }
 
 export async function getAllowances(address) {

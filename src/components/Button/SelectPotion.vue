@@ -2,7 +2,7 @@
   <span>
     <a class="input" @click="modalOpen = true">
       <span v-if="input">
-        {{ input.token }}, strike price: ${{ $n(input.strike) }} ({{ input.expiry }})
+        {{ input.asset }}, strike price: ${{ $n(input.mintSprice) }} ({{ input.expiry | formatTs }})
       </span>
       <template v-else>Your potions ({{ potions.length }})</template>
     </a>

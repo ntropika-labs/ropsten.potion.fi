@@ -115,7 +115,12 @@ const actions = {
     const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
     const factoryWithSigner = factory.connect(signer);
     const ticker = assets[payload.asset].ticker;
-    const expirationTimestamp = '1590969600';
+
+    const [year, month, day] = payload.expiry.split('-');
+    const expiryDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    let expirationTimestamp = parseInt((expiryDate.getTime() / 1000).toString()).toString();
+    // console.log(expirationTimestamp, '1590969600');
+    expirationTimestamp = '1590969600';
     const syntheticName = `${ticker} Potion ${payload.expiry}`;
     const syntheticSymbol = `${ticker}POT`;
     const params = {

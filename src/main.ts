@@ -5,6 +5,7 @@ import { upperFirst, camelCase } from 'lodash';
 import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
+import { formatTs } from '@/helpers/utils';
 import messages from '@/helpers/messages.json';
 import numberFormats from '@/helpers/number.json';
 import '@/style.scss';
@@ -19,6 +20,8 @@ requireComponent.keys().forEach(fileName => {
   const componentName = upperFirst(camelCase(fileName.replace(/^\.\//, '').replace(/\.\w+$/, '')));
   Vue.component(componentName, componentConfig.default || componentConfig);
 });
+
+Vue.filter('formatTs', value => formatTs(value));
 
 Vue.config.productionTip = false;
 
