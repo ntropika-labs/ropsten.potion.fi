@@ -2,7 +2,7 @@
   <Modal :open="open" @close="$emit('close')">
     <div class="modal-body px-4">
       <img src="~/@/assets/revitalize.svg" class="mb-2" />
-      <div v-if="!isConfirmed">
+      <div v-if="step === 0">
         <h2 class="mb-5">Your revitalization</h2>
         <div class="text-left">
           <div class="border-bottom mb-5">
@@ -75,18 +75,24 @@
           <button class="button button-outline col-6 mr-2" @click="$emit('close')">Cancel</button>
           <button
             class="button button-primary col-6 ml-2"
-            :disabled="!price || isLoading"
-            @click="!isApproved ? handleApprovePotion() : handleRevitalisePotion()"
+            v-if="!isApproved"
+            :disabled="isLoading"
+            @click="handleApprovePotion"
           >
             <VueLoadingIndicator v-if="isLoading" class="big" />
-            <template v-else>
-              <template v-if="isApproved">Confirm</template>
-              <template v-else>Unlock {{ form.potion.asset }}POT</template>
-            </template>
+            <template v-else>Unlock {{ form.potion.asset }}POT</template>
+          </button>
+          <button
+            v-else
+            class="button button-primary col-6 ml-2"
+            :disabled="!price"
+            @click="step = 1"
+          >
+            Next
           </button>
         </div>
       </div>
-      <div v-else>
+      <div v-else-if="step === 1">
         <h2 class="mb-5">Be careful</h2>
         <p class="mb-5">
           In order to liquidate you must stake DAI. If you entered wrong values and are disputed,
@@ -119,6 +125,7 @@ export default {
   props: ['open', 'form'],
   data() {
     return {
+      step: 0,
       isApproved: false,
       isConfirmed: false,
       isLoading: false,
@@ -147,7 +154,7 @@ export default {
       this.isConfirmed = false;
       const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
       this.isApproved = !!allowance;
-      this.isApproved = true;
+      this.isApproved = false;
       this.isConfirmed = false;
     },
     autoPrice(value) {

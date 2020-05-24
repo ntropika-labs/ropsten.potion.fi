@@ -18,6 +18,13 @@
           <a v-else class="button button-primary" @click="modalLoginOpen = true">
             Connect wallet
           </a>
+          <a
+            class="button button-info ml-2 d-inline-block"
+            target="_blank"
+            href="https://docs.potion.finance"
+          >
+            ?
+          </a>
         </div>
       </div>
       <div class="pt-4 pb-10">
