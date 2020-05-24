@@ -156,7 +156,8 @@ export default {
     }
   },
   created() {
-    const daiAllowance = parseFloat(this.settings.allowances.DAI || '0');
+    const daiAddress = process.env.VUE_APP_DAI_ADDRESS;
+    const daiAllowance = parseFloat(this.settings.allowances[daiAddress] || '0');
     this.isApproved = !!daiAllowance;
   }
 };

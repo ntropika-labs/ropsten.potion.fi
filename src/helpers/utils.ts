@@ -86,13 +86,21 @@ export async function getPotions(address) {
   return await Promise.all(promises);
 }
 
-export async function getAllowances(address) {
+export async function getAllowances(address, tokenAddresses) {
+  const allowances = {};
   const factoryAddress = process.env.VUE_APP_FACTORY_ADDRESS;
-  const daiAddress = process.env.VUE_APP_DAI_ADDRESS;
-  // @ts-ignore
-  const contract = new ethers.Contract(daiAddress, ierc20Abi, provider);
-  const daiAllowance = await contract.allowance(address, factoryAddress);
-  return { DAI: ethers.utils.formatEther(daiAllowance) };
+  const promises = [];
+  tokenAddresses.forEach(tokenAddress => {
+    const contract = new ethers.Contract(tokenAddress, ierc20Abi, provider);
+    // @ts-ignore
+    promises.push(contract.allowance(address, factoryAddress));
+  });
+  Promise.all(promises).then(result => {
+    result.forEach((allowance, i) => {
+      allowances[tokenAddresses[i]] = ethers.utils.formatEther(allowance);
+    });
+  });
+  return allowances;
 }
 
 export async function revitalisePotion(payload) {

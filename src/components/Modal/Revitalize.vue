@@ -154,7 +154,6 @@ export default {
       this.isConfirmed = false;
       const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
       this.isApproved = !!allowance;
-      this.isApproved = false;
       this.isConfirmed = false;
     },
     autoPrice(value) {

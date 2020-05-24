@@ -67,10 +67,10 @@ const actions = {
         const name = await provider.lookupAddress(address);
         const balance = await provider.getBalance(address);
         const network = await provider.getNetwork();
-        await dispatch('loadPotions', address);
-        await dispatch('loadAllowances', address);
+        commit('set', { address });
+        await dispatch('loadPotions');
+        await dispatch('loadAllowances');
         commit('set', {
-          address,
           name,
           balance: ethers.utils.formatEther(balance),
           network,
@@ -90,14 +90,19 @@ const actions = {
     const exchangeRates = await getExchangeRatesFromCoinGecko();
     commit('set', { exchangeRates });
   },
-  async loadPotions({ commit }, payload) {
-    const address = payload || state.address;
-    const potions = await getPotions(address);
+  async loadPotions({ commit }) {
+    const potions = await getPotions(state.address);
     console.log('Your potions', potions);
     commit('set', { potions });
   },
-  async loadAllowances({ commit }, payload) {
-    const allowances = await getAllowances(payload);
+  async loadAllowances({ commit }) {
+    const daiAddress = process.env.VUE_APP_DAI_ADDRESS;
+    const addresses = [daiAddress]
+    Object.entries(state.potions).forEach(potion => {
+      // @ts-ignore
+      addresses.push(potion[1].address);
+    });
+    const allowances = await getAllowances(state.address, addresses);
     console.log('Your allowances', allowances);
     commit('set', { allowances });
   },
