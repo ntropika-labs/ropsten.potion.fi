@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import store from '@/store';
 import provider from '@/helpers/provider';
 import { getExchangeRatesFromCoinGecko, getPotions, getAllowances } from '@/helpers/utils';
+import assets from '@/helpers/assets.json';
 import { abi as ierc20Abi } from '@/helpers/abi/IERC20.json';
 import { abi as factoryAbi } from '@/helpers/abi/Factory.json';
 
@@ -81,7 +82,8 @@ const actions = {
     commit('set', { exchangeRates });
   },
   async loadPotions({ commit }, payload) {
-    const potions = await getPotions(payload);
+    const address = payload || state.address;
+    const potions = await getPotions(address);
     console.log('Your potions', potions);
     commit('set', { potions });
   },
@@ -112,29 +114,33 @@ const actions = {
     // @ts-ignore
     const factory = new ethers.Contract(factoryAddress, factoryAbi, provider);
     const factoryWithSigner = factory.connect(signer);
+    const ticker = assets[payload.asset].ticker;
+    const expirationTimestamp = '1590969600';
+    const syntheticName = `${ticker} Potion ${payload.expiry}`;
+    const syntheticSymbol = `${ticker}POT`;
     const params = {
-      expirationTimestamp: '1590969600',
+      expirationTimestamp,
       withdrawalLiveness: '1',
       collateralAddress: daiAddress,
       finderAddress,
       tokenFactoryAddress,
       priceFeedIdentifier: 'UMATEST',
-      syntheticName: 'ETH Potion Token June',
-      syntheticSymbol: 'GOLDPOT6',
+      syntheticName,
+      syntheticSymbol,
       liquidationLiveness: '1',
       collateralRequirement: { rawValue: parseEther('1.0') },
       disputeBondPct: { rawValue: parseEther('0.1') },
       sponsorDisputeRewardPct: { rawValue: parseEther('0.1') },
       disputerDisputeRewardPct: { rawValue: parseEther('0.1') },
-      strikePrice: { rawValue: parseEther('100') },
-      timerAddress,
-      assetPrice: { rawValue: parseEther('200') }
+      strikePrice: { rawValue: parseEther(payload.strike) },
+      assetPrice: { rawValue: parseEther(payload.price) },
+      timerAddress
     };
     const tx = await factoryWithSigner.writeMintPotion(
       params,
       poolLpAddress,
-      { rawValue: parseEther('700') },
-      { rawValue: parseEther('10') },
+      { rawValue: parseEther(payload.quantity) },
+      { rawValue: parseEther(payload.premium) },
       { gasLimit: 7e6, gasPrice: ethers.utils.parseUnits('20', 'gwei') }
     );
     console.log(tx.hash);

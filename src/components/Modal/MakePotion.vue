@@ -67,7 +67,11 @@
       <div v-else>
         <h2 class="mb-5">Mix, turn and pour</h2>
         <VueLoadingIndicator class="loading-lg mb-5" />
-        <p class="mb-3">Potion Gold strike ${{ $n(1500) }} August 2020</p>
+        <p class="mb-3">
+          <Ticker :id="form.asset" />
+          potion<br />
+          Strike at ${{ $n(form.strike) }} on {{ form.expiry }}
+        </p>
         <h2 class="mb-5">Wait for creation…</h2>
         <div>
           <a @click="$emit('close')" class="col-6 button button-outline">
@@ -115,14 +119,23 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['login', 'approve', 'writeMintPotion']),
-    handleSubmit() {
+    ...mapActions(['login', 'approve', 'writeMintPotion', 'loadPotions']),
+    async handleSubmit() {
       this.isLoading = true;
       if (this.isApproved) {
-        this.writeMintPotion().then(() => {
-          this.isConfirmed = true;
-          this.isLoading = false;
-        });
+        this.isConfirmed = true;
+        this.isLoading = false;
+        const payload = {
+          asset: this.form.asset,
+          strike: this.form.strike,
+          expiry: this.form.expiry,
+          quantity: this.form.quantity,
+          price: this.price,
+          premium: this.premiumDeposit.toString()
+        };
+        await this.writeMintPotion(payload);
+        await this.loadPotions();
+        this.$router.push({ name: 'potions' });
       } else {
         this.approve().then(() => {
           this.isApproved = true;
