@@ -16,8 +16,10 @@
               Asset
               <Ticker :id="coingecko[form.potion.asset]" class="float-right" />
             </div>
-            <div class="mb-5" v-if="availableQuantity">
-              Available quantity<span class="float-right">{{ availableQuantity }}</span>
+            <div class="mb-5">
+              Available quantity<span class="float-right" v-if="isInit">{{
+                availableQuantity
+              }}</span>
             </div>
           </div>
           <h2 class="mb-5 text-center">Balance revitalization</h2>
@@ -140,6 +142,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+import { getBS, formatTs, getMinDay } from '@/helpers/utils';
 import coingecko from '@/helpers/coingecko.json';
 
 export default {
@@ -147,6 +150,7 @@ export default {
   data() {
     return {
       step: 0,
+      isInit: false,
       isApproved: false,
       isConfirmed: false,
       isLoading: false,
@@ -167,29 +171,41 @@ export default {
         : 0;
     },
     availableQuantity() {
-      const balance = this.settings.balances[this.form.potion.address];
-      if (!balance && this.form.potion.address) this.loadBalanceIn(this.form.potion.address);
-      return balance;
+      return this.settings.balances[this.form.potion.address] || 0;
     }
   },
   watch: {
-    open(value) {
-      this.autoPrice = true;
-      this.price = this.currentPrice;
-      this.isLoading = false;
-      this.isConfirmed = false;
-      const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
-      this.isApproved = !!allowance;
-      this.isConfirmed = false;
-      this.step = 0;
-      console.log(this.availableQuantity);
+    async open(value, oldValue) {
+      if (value === true && oldValue === false) {
+        console.log(this.form.potion.address);
+        await this.loadBalanceIn(this.form.potion.address);
+        const ticker = coingecko[this.form.potion.asset];
+        this.bs = await getBS(
+          ticker,
+          getMinDay(formatTs(this.form.potion.expiry)),
+          parseFloat(this.form.potion.mintAprice),
+          parseFloat(this.form.potion.mintSprice),
+          0.0410959
+        );
+        this.pricePerPotion = this.bs;
+        this.isInit = true;
+      } else {
+        this.autoPrice = true;
+        this.price = this.currentPrice;
+        this.isLoading = false;
+        this.isConfirmed = false;
+        const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
+        this.isApproved = !!allowance;
+        this.isConfirmed = false;
+        this.step = 0;
+      }
     },
     autoPrice(value) {
       if (value) this.price = this.currentPrice;
     }
   },
   methods: {
-    ...mapActions(['approvePotion', 'revitalisePotion', 'loadBalanceIn']),
+    ...mapActions(['approvePotion', 'revitalisePotion', 'loadBalanceIn', 'getBS']),
     async handleApprovePotion() {
       this.isLoading = true;
       try {

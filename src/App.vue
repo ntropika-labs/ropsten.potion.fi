@@ -10,7 +10,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { getBlackScholes } from '@/helpers/utils';
 
 export default {
   computed: {
@@ -21,7 +20,6 @@ export default {
   },
   async created() {
     this.init();
-    await getBlackScholes('bitcoin').then(blackScholes => console.log(blackScholes));
   }
 };
 </script>

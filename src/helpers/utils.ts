@@ -1,3 +1,5 @@
+import bs from 'black-scholes';
+import volatility from 'volatility';
 import provider from '@/helpers/provider';
 import assets from '@/helpers/assets.json';
 import premium from '@/helpers/premium.json';
@@ -138,6 +140,40 @@ export async function getMarketChartFromCoinGecko(coingeckoId) {
   return ratePerDay;
 }
 
-export async function getBlackScholes(coingeckoId) {
-  return await getMarketChartFromCoinGecko(coingeckoId);
+export async function getVolatility(coingeckoId, fromDay) {
+  const fromDate = new Date(fromDay);
+  fromDate.setDate(fromDate.getDate() - 2);
+  const pricePerDay = await getMarketChartFromCoinGecko(coingeckoId);
+  const pricePerDayValid = {};
+  Object.entries(pricePerDay).forEach(price => {
+    if (new Date(price[0]) > fromDate) pricePerDayValid[price[0]] = price[1];
+  });
+  console.log('Price per day', pricePerDayValid);
+  let prevPrice;
+  const priceArr = [];
+  Object.entries(pricePerDayValid).forEach(priceValid => {
+    // @ts-ignore
+    if (prevPrice) priceArr.push(Math.log(priceValid[1] / prevPrice));
+    prevPrice = priceValid[1];
+  });
+  console.log('Price array', priceArr);
+  console.log('coingeckoId', coingeckoId);
+  return Math.sqrt(365) * volatility(priceArr);
+}
+
+export async function getBS(coingeckoId, fromDay, s, k, t) {
+  const v = await getVolatility(coingeckoId, fromDay);
+  console.log('v:', v); // Volatility between minting and liquidation
+  console.log('s:', s); // Price at minting
+  console.log('k:', k); // Strike price
+  console.log('t:', t); // Time between minting and liquidation
+  const BS = bs.blackScholes(s, k, t, v, 0, 'put');
+  console.log('BS =', BS);
+  return BS;
+}
+
+export function getMinDay(mintDay) {
+  const minDay = new Date();
+  minDay.setDate(minDay.getDate() - 1);
+  return mintDay > minDay ? mintDay : minDay;
 }
