@@ -179,7 +179,7 @@ const actions = {
       { gasLimit: 7e6, gasPrice: ethers.utils.parseUnits('20', 'gwei') }
     );
     console.log(tx.hash);
-    await tx.wait();
+    await tx.wait(1);
     await dispatch('loadPotions');
   },
   async loadBalanceIn({ commit }, payload) {

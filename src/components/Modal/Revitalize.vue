@@ -142,7 +142,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import { getBS, formatTs, getMinDay } from '@/helpers/utils';
+import { getBS, formatTs, getMinDay, getDeploymentTimestamp } from '@/helpers/utils';
 import coingecko from '@/helpers/coingecko.json';
 
 export default {
@@ -177,31 +177,25 @@ export default {
   watch: {
     async open(value, oldValue) {
       if (value === true && oldValue === false) {
-        console.log(this.form.potion.address);
-        await this.loadBalanceIn(this.form.potion.address);
-        const ticker = coingecko[this.form.potion.asset];
-        this.bs = await getBS(
-          ticker,
-          getMinDay(formatTs(this.form.potion.expiry)),
-          parseFloat(this.form.potion.mintAprice),
-          parseFloat(this.form.potion.mintSprice),
-          0.0410959
-        );
-        this.pricePerPotion = this.bs;
-        this.isInit = true;
-      } else {
-        this.autoPrice = true;
-        this.price = this.currentPrice;
-        this.isLoading = false;
-        this.isConfirmed = false;
-        const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
-        this.isApproved = !!allowance;
-        this.isConfirmed = false;
-        this.step = 0;
+        await this.init();
       }
+      this.autoPrice = true;
+      this.price = this.currentPrice;
+      this.isLoading = false;
+      this.isConfirmed = false;
+      const allowance = parseFloat(this.settings.allowances[this.form.potion.address] || '0');
+      this.isApproved = !!allowance;
+      this.isConfirmed = false;
+      this.step = 0;
     },
     autoPrice(value) {
       if (value) this.price = this.currentPrice;
+    },
+    quantity(value, oldValue) {
+      if (value !== oldValue && this.autoPricePerPotion) this.init();
+    },
+    price(value, oldValue) {
+      if (value !== oldValue && this.autoPricePerPotion) this.init();
     }
   },
   methods: {
@@ -229,6 +223,24 @@ export default {
         console.error(e);
       }
       this.isLoading = false;
+    },
+    async init() {
+      console.log(this.form.potion.address);
+      await this.loadBalanceIn(this.form.potion.address);
+      const tMining = parseInt(await getDeploymentTimestamp(this.form.potion.contractAddress));
+      const tLiquidiation = (new Date()).getTime() / 1000;
+      const t = (tLiquidiation - tMining) / 31536000; // 0.0410959
+      console.log('t', t);
+      const ticker = coingecko[this.form.potion.asset];
+      this.bs = await getBS(
+        ticker,
+        getMinDay(formatTs(this.form.potion.expiry)),
+        parseFloat(this.form.potion.mintAprice),
+        parseFloat(this.form.potion.mintSprice),
+        t
+      );
+      this.pricePerPotion = this.bs;
+      this.isInit = true;
     }
   }
 };

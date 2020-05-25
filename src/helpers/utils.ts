@@ -177,3 +177,10 @@ export function getMinDay(mintDay) {
   minDay.setDate(minDay.getDate() - 1);
   return mintDay > minDay ? mintDay : minDay;
 }
+
+export async function getDeploymentTimestamp(address) {
+  // @ts-ignore
+  const potionContract = new ethers.Contract(address, potionAbi, provider);
+  const deploymentTimestamp = await potionContract.getDeploymentTimestamp();
+  return deploymentTimestamp.toString();
+}
