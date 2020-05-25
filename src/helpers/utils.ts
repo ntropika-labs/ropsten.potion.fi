@@ -161,7 +161,7 @@ export async function getVolatility(coingeckoId, fromDay) {
   return Math.sqrt(365) * volatility(priceArr);
 }
 
-export async function getBS(coingeckoId, fromDay, s, k, t) {
+export async function getBS(coingeckoId, fromDay, k, s, t) {
   const v = await getVolatility(coingeckoId, fromDay);
   console.log('v:', v); // Volatility between minting and liquidation
   console.log('s:', s); // Price at minting
@@ -173,8 +173,8 @@ export async function getBS(coingeckoId, fromDay, s, k, t) {
 }
 
 export function getMinDay(mintDay) {
-  const minDay = new Date();
-  minDay.setDate(minDay.getDate() - 1);
+  const ms = new Date().getTime() + (86400000 * 5);
+  const minDay = new Date(ms);
   return mintDay > minDay ? mintDay : minDay;
 }
 

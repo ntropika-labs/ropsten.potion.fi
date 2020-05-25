@@ -17,9 +17,8 @@
               <Ticker :id="coingecko[form.potion.asset]" class="float-right" />
             </div>
             <div class="mb-5">
-              Available quantity<span class="float-right" v-if="isInit">{{
-                availableQuantity
-              }}</span>
+              Available quantity<span class="float-right" v-if="isInit">
+              {{ availableQuantity }}</span>
             </div>
           </div>
           <h2 class="mb-5 text-center">Balance revitalization</h2>
@@ -225,16 +224,19 @@ export default {
       this.isLoading = false;
     },
     async init() {
+      console.log('================================')
       console.log(this.form.potion.address);
       await this.loadBalanceIn(this.form.potion.address);
-      const tMining = parseInt(await getDeploymentTimestamp(this.form.potion.contractAddress));
+      const tMinting = parseInt(await getDeploymentTimestamp(this.form.potion.contractAddress));
+      const minDay = parseInt(getMinDay(formatTs(tMinting)).getTime() / 10000);
+      console.log('Min day', minDay);
       const tLiquidiation = (new Date()).getTime() / 1000;
-      const t = (tLiquidiation - tMining) / 31536000; // 0.0410959
-      console.log('t', t);
+      const t = (tLiquidiation - minDay) / 31536000;
+      console.log('t', t); // 0.0410959
       const ticker = coingecko[this.form.potion.asset];
       this.bs = await getBS(
         ticker,
-        getMinDay(formatTs(this.form.potion.expiry)),
+        (new Date()).getTime(),
         parseFloat(this.form.potion.mintAprice),
         parseFloat(this.form.potion.mintSprice),
         t

@@ -175,8 +175,7 @@ const actions = {
       params,
       poolLpAddress,
       { rawValue: parseEther(payload.quantity) },
-      { rawValue: parseEther(payload.premium) },
-      { gasLimit: 7e6, gasPrice: ethers.utils.parseUnits('20', 'gwei') }
+      { rawValue: parseEther(payload.premium) }
     );
     console.log(tx.hash);
     await tx.wait(1);
