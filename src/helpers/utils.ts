@@ -101,7 +101,7 @@ export async function revitalisePotion(payload) {
   const tx = await factoryWithSigner.revitalisePotion(
     payload.contractAddress,
     poolLpAddress,
-    { rawValue: ethers.utils.parseEther(payload.amountRev) }, // nTokens
+    { rawValue: ethers.utils.parseEther(payload.quantity) }, // nTokens
     { rawValue: ethers.utils.parseEther(payload.price) }, // assetPrice
     { rawValue: ethers.utils.parseEther('5') }, // dvmBond
     { rawValue: ethers.utils.parseEther('1') }, // finalDeposit
@@ -173,7 +173,7 @@ export async function getBS(coingeckoId, fromDay, k, s, t) {
 }
 
 export function getMinDay(mintDay) {
-  const ms = new Date().getTime() + (86400000 * 5);
+  const ms = new Date().getTime() + 86400000 * 5;
   const minDay = new Date(ms);
   return mintDay > minDay ? mintDay : minDay;
 }

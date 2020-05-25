@@ -18,7 +18,8 @@
             </div>
             <div class="mb-5">
               Available quantity<span class="float-right" v-if="isInit">
-              {{ availableQuantity }}</span>
+                {{ availableQuantity }}</span
+              >
             </div>
           </div>
           <h2 class="mb-5 text-center">Balance revitalization</h2>
@@ -89,7 +90,7 @@
           <button
             v-else
             class="button button-primary col-6 ml-2"
-            :disabled="!price"
+            :disabled="!price || !quantity"
             @click="step = 1"
           >
             Next
@@ -190,9 +191,6 @@ export default {
     autoPrice(value) {
       if (value) this.price = this.currentPrice;
     },
-    quantity(value, oldValue) {
-      if (value !== oldValue && this.autoPricePerPotion) this.init();
-    },
     price(value, oldValue) {
       if (value !== oldValue && this.autoPricePerPotion) this.init();
     }
@@ -213,6 +211,7 @@ export default {
       this.isLoading = true;
       const payload = this.form.potion;
       payload.price = this.price;
+      payload.quantity = this.quantity;
       try {
         this.step++;
         await this.revitalisePotion(payload);
@@ -224,19 +223,28 @@ export default {
       this.isLoading = false;
     },
     async init() {
-      console.log('================================')
+      this.quantity = '';
+      this.autoPrice = true;
+      this.price = this.currentPrice;
+      this.pricePerPotion = '';
+
+      console.log('================================');
       console.log(this.form.potion.address);
       await this.loadBalanceIn(this.form.potion.address);
+
       const tMinting = parseInt(await getDeploymentTimestamp(this.form.potion.contractAddress));
-      const minDay = parseInt(getMinDay(formatTs(tMinting)).getTime() / 10000);
-      console.log('Min day', minDay);
-      const tLiquidiation = (new Date()).getTime() / 1000;
-      const t = (tLiquidiation - minDay) / 31536000;
+      console.log('T minting', tMinting);
+
+      const tLiquidiation = new Date().getTime() / 1000 + 86400 * 5;
+      console.log('T liquidiation', tLiquidiation);
+
+      const t = (tLiquidiation - tMinting) / 31536000;
       console.log('t', t); // 0.0410959
+
       const ticker = coingecko[this.form.potion.asset];
       this.bs = await getBS(
         ticker,
-        (new Date()).getTime(),
+        parseInt(new Date().getTime() / 1000),
         parseFloat(this.form.potion.mintAprice),
         parseFloat(this.form.potion.mintSprice),
         t
