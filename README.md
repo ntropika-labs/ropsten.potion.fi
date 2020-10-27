@@ -1,4 +1,5 @@
 # Potion
+Potion is an open-source project doing research on risk-managed Automatic Market Makers (AMM). Given its early-stage nature, it consits only on software code freely contributed by community members.
 
 ## Project setup
 ```
